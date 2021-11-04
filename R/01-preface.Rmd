@@ -1,0 +1,14 @@
+# Preface {-}
+
+This project was completed in accordance with the requirements for the Applied Data Science course in the Data Science Masters program at New College of Florida.
+```{r include=FALSE}
+# Import all R scripts in the project directory
+rscripts <- list.files(pattern = ".R$", recursive = TRUE)
+
+# Only imports R scripts which do not lead with an underscore
+for (file in grep("/_", rscripts, invert=T, value=T)) {
+  source(file, local = knitr::knit_global())
+}
+
+knitr::opts_chunk$set(message = F, warning = F)
+```

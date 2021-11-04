@@ -1,6 +1,6 @@
 ---
 title: "Title Goes Here"
-author: "Mei Maddox, Mileva Van Tuyl, Thomas"
+author: "Mei Maddox, Mileva Van Tuyl, Thomas Fitzgerald"
 date: "Last Compiled on `r format(Sys.Date(), format='%b %d %Y')`"
 output:
   bookdown::pdf_book: default
