@@ -13,7 +13,35 @@ get.dataset <- function(){
     a <- grep("2000", colnames(data))
     b <- grep(format(Sys.Date(), format='%Y'), colnames(data))-1
     if( length(b)==0 ) b <- ncol(data)
-    tibble::as_tibble( data[, c(1, a:b)] ) 
+    tibble::as_tibble( data[, c(1, a:b)], 
+                       .name_repair = function(x) gsub(".*\\.", "", x) )
   })
+  return(x)
+}
+
+country.polygons <- function(){
+  x <- sapply(data$gini$country, function(x){
+    country <- which(x==gsub("\\:.*", "", world.map$names))
+    if( length(country)!=0 ) return(world.map$names[country])
+    
+    if( x=="United States" ) country <- "USA"
+    else if( x=="United Kingdom" ) country <- "UK"
+    else{
+      country <- gsub("St\\.", "Saint", x)
+      country <- gsub("\\.|the |Fed\\. Sts\\.", "", country)
+      if( grepl(", ", country) ){
+        country <- unlist(strsplit(country, "\\, | "))
+        country <- paste(c(country[-1], country[1]), collapse=".*")
+      }
+      country <- unlist(strsplit(country, " and "))
+    }
+    world.map$names[unlist(lapply(country, function(x){
+      grep(paste0("^", x, collapse = ""), 
+           gsub("\\:.*", "", world.map$names))}))]
+  })
+  hong.kong <- grep("Hong Kong", x$China)
+  x$`Hong Kong, China` <- x$China[hong.kong]
+  x$China <- x$China[-hong.kong]
+  print(paste("Country not found:",names(x)[sapply(x, length)==0]))
   return(x)
 }
