@@ -1,4 +1,4 @@
-get.dataset <- function(){
+get.raw.dataset <- function(){
   ids <- list(gini="1TOQiiau_U3Zmf7UckYdp0vX9r0Hk6OSj", 
               poverty="1NGhqxQ9yG4rHBjHabUsEB0k4NjCpiRPg", 
               education_boys="1XivWARyORXko0MAnYPSnf5IIu0s8S72p", 
@@ -19,6 +19,20 @@ get.dataset <- function(){
   return(x)
 }
 
+get.melted.dataset <- function(data.list){
+  lapply(names(data.list), function(x){
+    data.list[[x]] %>% 
+      dplyr::mutate_at(dplyr::vars(matches('^X[0-9].*$')), 
+          function(col) as.numeric(sub("k", "e3", col, fixed = TRUE))) %>%
+      reshape2::melt(id=1, variable.name="year", value.name = x)
+  }) %>% 
+    purrr::reduce(dplyr::full_join) %>% 
+    dplyr::mutate_at(c("year"), 
+          function(col) as.numeric(sub("X", "", col))) %>%
+    dplyr::mutate_at(c("country"), as.factor)%>%
+    tibble::as_tibble()
+}
+
 country.polygons <- function(){
   x <- sapply(data$gini$country, function(x){
     country <- which(x==gsub("\\:.*", "", world.map$names))
@@ -36,7 +50,7 @@ country.polygons <- function(){
       country <- unlist(strsplit(country, " and "))
     }
     world.map$names[unlist(lapply(country, function(x){
-      grep(paste0("^", x, collapse = ""), 
+      grep(paste0("^", x), 
            gsub("\\:.*", "", world.map$names))}))]
   })
   hong.kong <- grep("Hong Kong", x$China)

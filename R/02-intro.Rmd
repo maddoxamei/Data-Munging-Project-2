@@ -1,5 +1,12 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 # Introduction
 
 
-```{r}
-data <- get.dataset()
+```{r echo=FALSE}
+data <- get.raw.dataset()
+data.melt <- get.melted.dataset(data)
+```
