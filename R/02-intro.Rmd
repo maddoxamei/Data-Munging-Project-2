@@ -4,15 +4,22 @@ editor_options:
   chunk_output_type: console
 ---
 # Introduction
-
-
-```{r include=FALSE}
+```{r eval=FALSE}
 data.raw <- get.raw.dataset()
 data.melt <- get.melted.dataset(data.raw)
 
 data.melt$education <- data.melt$education_boys - data.melt$education_girls
 
 data.melt %<>% append.regions()
+
+write.csv(data.melt, "ComprehensiveMeltedData.csv", row.names=F)
+```
+
+
+```{r include=FALSE}
+data.melt <- read.csv("ComprehensiveMeltedData.csv") %>%
+  tibble::as_tibble() %>%
+    dplyr::mutate_if(is.character, as.factor)
 
 data.melt.avg <- data.melt %>% 
   dplyr::select(-"year") %>% 
