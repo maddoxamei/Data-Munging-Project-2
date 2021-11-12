@@ -71,6 +71,7 @@ append.regions <- function(data.melt){
   mapdata %>% 
     dplyr::select(name, continent, subregion) %>% 
     dplyr::right_join(x) %>%
-    dplyr::right_join(data.melt)
+    dplyr::right_join(data.melt) %>%
+    dplyr::mutate_if(is.character, as.factor)
 }
 

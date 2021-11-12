@@ -16,5 +16,5 @@ data.melt %<>% append.regions()
 
 data.melt.avg <- data.melt %>% 
   dplyr::select(-"year") %>% 
-  dplyr::group_by(country) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
+  dplyr::group_by_if(is.factor) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
 ```
