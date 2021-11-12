@@ -6,7 +6,15 @@ editor_options:
 # Introduction
 
 
-```{r echo=FALSE}
-data <- get.raw.dataset()
-data.melt <- get.melted.dataset(data)
+```{r include=FALSE}
+data.raw <- get.raw.dataset()
+data.melt <- get.melted.dataset(data.raw)
+
+data.melt$education <- data.melt$education_boys - data.melt$education_girls
+
+data.melt %<>% append.regions()
+
+data.melt.avg <- data.melt %>% 
+  dplyr::select(-"year") %>% 
+  dplyr::group_by(country) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
 ```

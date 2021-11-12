@@ -21,39 +21,56 @@ get.melted.dataset <- function(data.list){
   lapply(names(data.list), function(x){
     data.list[[x]] %>% 
       dplyr::mutate_at(dplyr::vars(matches('^X[0-9].*$')), 
-          function(col) as.numeric(sub("k", "e3", col, fixed = TRUE))) %>%
+                       function(col) as.numeric(sub("k", "e3", col, fixed = TRUE))) %>%
       reshape2::melt(id=1, variable.name="year", value.name = x)
   }) %>% 
     purrr::reduce(dplyr::full_join) %>% 
     dplyr::mutate_at(c("year"), 
-          function(col) as.numeric(sub("X", "", col))) %>%
+                     function(col) as.numeric(sub("X", "", col))) %>%
+    filter_at(vars(-one_of(c("country", "year"))),
+              any_vars(!is.na(.))) %>%
     dplyr::mutate_at(c("country"), as.factor)%>%
     tibble::as_tibble()
 }
 
-country.polygons <- function(){
-  x <- sapply(data$gini$country, function(x){
-    country <- which(x==gsub("\\:.*", "", world.map$names))
-    if( length(country)!=0 ) return(world.map$names[country])
-    
-    if( x=="United States" ) country <- "USA"
-    else if( x=="United Kingdom" ) country <- "UK"
-    else{
-      country <- gsub("St\\.", "Saint", x)
-      country <- gsub("\\.|the |Fed\\. Sts\\.", "", country)
-      if( grepl(", ", country) ){
-        country <- unlist(strsplit(country, "\\, | "))
-        country <- paste(c(country[-1], country[1]), collapse=".*")
-      }
-      country <- unlist(strsplit(country, " and "))
+match.regions <- function(data.names, country.names){
+  x <- sapply(data.names, function(x){
+    country <- gsub("St\\.", "Saint", x)
+    match <- which(country==gsub("\\:.*", "", country.names))
+    if( length(match)!=0 ) return(country.names[match])
+    country <- gsub("-", " ", country)
+    country <- gsub("\\.|The |North |\\, Fed\\. Sts\\.| Leste", "", country)
+    if( country=="Slovak Republic" ) country <- "Slovakia"
+    else if( country=="United States" ) country <- "	
+United States of America"
+    else if( country=="Kyrgyz Republic" ) country <- "Kyrgyzstan"
+    else if( country=="Virgin Islands (US)" ) country <- "United States Virgin Islands"
+    else if( country=="Eswatini" ) country <- "Swaziland"
+    else if( grepl("Congo", country) ){
+      country <- unlist(strsplit(country, "\\, | "))
+      country <- paste(c(country[-1], country[1]), collapse=".*")
+      country <- paste0("^", country)
     }
-    world.map$names[unlist(lapply(country, function(x){
-      grep(paste0("^", x), 
-           gsub("\\:.*", "", world.map$names))}))]
+    else if( grepl(", ", country)) country <- gsub(".*, ", "", country)
+    country <- unlist(strsplit(country, " and "))
+    country.names[unlist(lapply(country, function(x){
+      grep(x, country.names)}))]
   })
-  hong.kong <- grep("Hong Kong", x$China)
-  x$`Hong Kong, China` <- x$China[hong.kong]
-  x$China <- x$China[-hong.kong]
+  x$`United States` <- x$`United States`[-grep("Virgin Islands", x$`United States`)]
   print(paste("Country not found:",names(x)[sapply(x, length)==0]))
-  return(x)
+  
+  x %>% reshape2::melt() %>% 
+    tibble::as_tibble()
 }
+
+append.regions <- function(data.melt){
+  mapdata <- highcharter::get_data_from_map(highcharter::download_map_data("custom/world-lowres"))
+  x <- match.regions(levels(data.melt$country), mapdata$name)
+  names(x) <- c("name", "country")
+  
+  mapdata %>% 
+    dplyr::select(name, continent, subregion) %>% 
+    dplyr::right_join(x) %>%
+    dplyr::right_join(data.melt)
+}
+
