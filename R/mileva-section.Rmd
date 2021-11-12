@@ -1,0 +1,81 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# sdf
+
+```{r}
+library (dplyr)
+library (ggplot2)
+library (countrycode)
+library (tidyverse)
+library (ggpubr)
+```
+
+## Birth rates and contraception rates over time
+
+```{r}
+data.melt.continent <- data.melt
+data.melt.continent$continent <- countrycode(sourcevar = data.melt.continent$country,
+                            origin = "country.name",
+                            destination = "continent")
+data.melt.continent$continent <- factor(data.melt.continent$continent)
+```
+
+Aggregate by year
+```{r}
+data.melt.avg.yearly <- data.melt.continent %>%
+  dplyr::select(-"country") %>%
+  dplyr::group_by(year, continent) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
+```
+
+Plot average birth rate and average gini coefficient by year across each continent
+```{r}
+require(gridExtra)
+plot1 <- ggplot(drop_na(data.melt.avg.yearly), aes(x=year, col = continent)) +
+  geom_line(aes(y=babies_per_woman_avg))
+plot2 <- ggplot(drop_na(data.melt.avg.yearly), aes(x=year, col = continent)) +
+  geom_line(aes(y=gini_avg))
+# plot3 <- ggplot(drop_na(data.melt.avg.yearly), aes(x=year, col = continent)) +
+#   geom_line(aes(y=income_avg))
+
+ggarrange(plot1, plot2, ncol=2, nrow=1, common.legend = TRUE, legend="bottom")
+```
+
+From this, we can see that the number of babies per woman and the amount of income inequality have, for the most part, decreased over time across all continents. 
+
+## Scatter plots of birth rates and contraception rates by country
+Aggregate by country
+```{r}
+data.melt.avg <- data.melt %>%
+  dplyr::select(-"year") %>%
+  dplyr::group_by(country) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
+```
+
+Label each record with its respective continent
+```{r}
+data.melt.avg$continent <- countrycode(sourcevar = data.melt.avg$country,
+                            origin = "country.name",
+                            destination = "continent")
+data.melt.avg$continent <- factor(data.melt.avg$continent)
+```
+
+We're interested in investigating how contraception and birth rates are associated with income inequality (as measured by the gini coefficient).
+
+A scatter plot demonstrating the relationship between contraception and income inequality. Each point represents a unique country. The size of the point represents the average income per person and the color corresponds to the continent the country is affiliated with. 
+
+```{r}
+g <- ggplot(drop_na(data.melt.avg), aes(x = contraception_avg, y = gini_avg, col = continent,  size = income_avg)) + geom_point() #+ geom_smooth(method = lm, aes(group =1, colour = "black"))
+plot(g)
+```
+
+The plot demonstrates a negative association between contraception use and income inequality. In other words, countries with higher contraception rates are those that have lower average gini coefficients. That said, we notice a similar association between contraception use and average income per person. So it is unclear which of the variables (income or income inequality) may explain this trend. 
+
+Plotting the contraception against income we see a stronger trend than that observed plotting contraception against income inequality, which would indicate that income may be the primary driving factor explaining the observed trend. 
+```{r}
+g <- ggplot(drop_na(data.melt.avg), aes(x = contraception_avg, y = income_avg, col = continent,  size = gini_avg)) + geom_point() #+ geom_smooth(method = lm, aes(group =1, colour = "black"))
+plot(g)
+```
+
+

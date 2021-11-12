@@ -4,10 +4,8 @@ get.raw.dataset <- function(){
               education_boys="1XivWARyORXko0MAnYPSnf5IIu0s8S72p", 
               education_girls="1h43Tk-l0KlxTBMhcFpeSIYPTkU3jorld",
               babies_per_woman="1CAdLSh8oehf4CaUHZc1Ax48XtjGkuFub",
-              infant_mortality="1pfT85eqVajo2g7qma3ivt73g7VIuSf0Y",
-              child_mortality="1EMRPXPjymLdShvCRn8LYBt5ckvt5iBfi",
-              maternal_mortality="1QQaI_YsMa68jnf3Tpcle9qanEH8nOZ1-",
-              income_per_person="1hfXAyRDE6HXr5CvGHv3fV0vph3ozDEwf")
+              contraception="174_oojvYBVSxf8QMY0wBCg5s_VKdsykV",
+              income="1hfXAyRDE6HXr5CvGHv3fV0vph3ozDEwf")
   x <- lapply(ids, function(x){
     data <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", x))
     a <- grep("2000", colnames(data))
