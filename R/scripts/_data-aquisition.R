@@ -41,8 +41,7 @@ match.regions <- function(data.names, country.names){
     country <- gsub("-", " ", country)
     country <- gsub("\\.|The |North |\\, Fed\\. Sts\\.| Leste", "", country)
     if( country=="Slovak Republic" ) country <- "Slovakia"
-    else if( country=="United States" ) country <- "	
-United States of America"
+    else if( country=="United States" ) country <- "United States of America"
     else if( country=="Kyrgyz Republic" ) country <- "Kyrgyzstan"
     else if( country=="Virgin Islands (US)" ) country <- "United States Virgin Islands"
     else if( country=="Eswatini" ) country <- "Swaziland"
@@ -56,7 +55,6 @@ United States of America"
     country.names[unlist(lapply(country, function(x){
       grep(x, country.names)}))]
   })
-  x$`United States` <- x$`United States`[-grep("Virgin Islands", x$`United States`)]
   print(paste("Country not found:",names(x)[sapply(x, length)==0]))
   
   x %>% reshape2::melt() %>% 
