@@ -5,7 +5,8 @@ get.raw.dataset <- function(){
               education_girls="1h43Tk-l0KlxTBMhcFpeSIYPTkU3jorld",
               babies_per_woman="1CAdLSh8oehf4CaUHZc1Ax48XtjGkuFub",
               contraception="174_oojvYBVSxf8QMY0wBCg5s_VKdsykV",
-              income="1hfXAyRDE6HXr5CvGHv3fV0vph3ozDEwf")
+              income="1hfXAyRDE6HXr5CvGHv3fV0vph3ozDEwf", 
+              suicide="1ythAEL4nSnQMB-QGwTFSmCsDvxgM_9Fp")
   x <- lapply(ids, function(x){
     data <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", x))
     a <- grep("2000", colnames(data))
