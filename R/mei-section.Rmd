@@ -15,7 +15,7 @@ data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.
 highcharter::hchart(data.melt.avg, "point",
           highcharter::hcaes(education_avg, gini_avg, group = continent),
           regression = TRUE, regressionSettings = list(hideInLegend = TRUE)) %>% 
-  hc_colors(RColorBrewer::brewer.pal(8, "Set1")) %>%
+  highcharter::hc_colors(RColorBrewer::brewer.pal(8, "Set1")) %>%
   highcharter::hc_xAxis( max= data.melt.avg$education_avg %>% abs() %>% max(na.rm = T) %>% ceiling() ) %>%
   highcharter::hc_add_dependency("plugins/highcharts-regression.js")
 ```
