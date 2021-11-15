@@ -83,7 +83,7 @@ Aggregate by year
 data.avg.yearly <- data.melt %>% 
   dplyr::group_by(year, continent) %>% 
   dplyr::summarise_each(list(avg = ~mean(.x, na.rm=TRUE))) %>% 
-  dplyr::select(-c("name_avg", "subregion_avg", "country_avg")) %>% 
+  dplyr::select(-c("hc.a2_avg", "subregion_avg", "country_avg")) %>% 
   dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
 ```
 
@@ -96,14 +96,17 @@ plot1 <- ggplot(drop_na(data.avg.yearly), aes(x=year, col = continent)) +
 plot2 <- ggplot(drop_na(data.avg.yearly), aes(x=year, col = continent)) +
   geom_line(aes(y=babies_per_woman_avg)) + ylab("babies per woman") 
 plot3 <- ggplot(drop_na(data.avg.yearly), aes(x=year, col = continent)) +
-  geom_line(aes(y=education_avg)) + ylab("Education inequality") 
+  geom_line(aes(y=education_discrepancy_avg)) + ylab("Education inequality") 
 plot4 <- ggplot(drop_na(data.avg.yearly), aes(x=year, col = continent)) +
   geom_line(aes(y=gini_avg)) + ylab("Gini coefficient") 
 
-plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
 
-annotate_figure(plot, top = text_grob("Variables of interest over time", 
-               color = "black", size = 14))
+ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+
+# plot <- ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+
+# annotate_figure(plot, top = text_grob("Variables of interest over time",
+#                color = "black", size = 14))
 ```
 
 All variables across time (only considering Africa, Asia, and Europe) to emphasize trends
@@ -116,14 +119,15 @@ plot1 <- ggplot(drop_na(data), aes(x=year, col = continent)) +
 plot2 <- ggplot(drop_na(data), aes(x=year, col = continent)) +
   geom_line(aes(y=babies_per_woman_avg)) + ylab("babies per woman") 
 plot3 <- ggplot(drop_na(data), aes(x=year, col = continent)) +
-  geom_line(aes(y=education_avg)) + ylab("Education inequality") 
+  geom_line(aes(y=education_discrepancy_avg)) + ylab("Education inequality") 
 plot4 <- ggplot(drop_na(data), aes(x=year, col = continent)) +
   geom_line(aes(y=gini_avg)) + ylab("Gini coefficient") 
 
-plot_new <- ggarrange(plot1, plot2,plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+ggarrange(plot1, plot2,plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+# plot_new <- ggarrange(plot1, plot2,plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
 
-annotate_figure(plot_new, top = text_grob("Variables of interest over time", 
-               color = "black", size = 14))
+# annotate_figure(plot_new, top = text_grob("Variables of interest over time", 
+#                color = "black", size = 14))
 ```
 
 
