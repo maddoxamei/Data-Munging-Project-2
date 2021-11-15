@@ -5,7 +5,7 @@ editor_options:
 ---
 # sdf
 
-```{r echo=FALSE}
+```{r eval=FALSE, include=FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
 data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
 ```
