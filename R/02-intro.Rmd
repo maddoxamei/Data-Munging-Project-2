@@ -8,7 +8,7 @@ editor_options:
 data.raw <- get.raw.dataset()
 data.melt <- get.melted.dataset(data.raw)
 
-data.melt$education <- data.melt$education_boys - data.melt$education_girls
+data.melt$education_discrepancy <- data.melt$education_boys - data.melt$education_girls
 
 data.melt %<>% append.regions()
 
@@ -24,4 +24,8 @@ data.melt <- read.csv("ComprehensiveMeltedData.csv") %>%
 data.melt.avg <- data.melt %>% 
   dplyr::select(-"year") %>% 
   dplyr::group_by_if(is.factor) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T)))
+
+data.melt.standardized <- data.melt %>% 
+  dplyr::mutate_if(is.numeric, function(x) (x-mean(x, na.rm=T))/sd(x, na.rm=T))
+data.melt.standardized$year <- data.melt$year
 ```
