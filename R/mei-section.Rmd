@@ -5,59 +5,31 @@ editor_options:
 ---
 # sdf
 
+```{r eval=FALSE, include=FALSE}
+world.regions <- establish.regions(levels(data.melt$country))
+data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
+```
+
+
 ```{r}
-data.melt.avg <- data.melt %>% 
-  dplyr::select(-"year") %>% 
-  dplyr::group_by(country) %>% dplyr::summarise_each(list(avg = ~mean(.x, na.rm=T))) 
+highcharter::hchart(data.melt.avg, "point",
+          highcharter::hcaes(education_discrepancy_avg, gini_avg, group = continent),
+          regression = TRUE, regressionSettings = list(hideInLegend = TRUE)) %>% 
+  highcharter::hc_colors(RColorBrewer::brewer.pal(8, "Set1")) %>%
+  highcharter::hc_xAxis( max= data.melt.avg$education_discrepancy_avg %>% abs() %>% max(na.rm = T) %>% ceiling() ) %>%
+  highcharter::hc_add_dependency("plugins/highcharts-regression.js")
 ```
 
 ```{r}
-world.map <- maps::map("world", fill = TRUE, plot = FALSE)
-x <- country.polygons()
-z <- maptools::map2SpatialPolygons(world.map, IDs=world.map$names)
-q <- sapply(names(z), function(wn){
-  v <- names(which(sapply(x, function(x){wn %in% x}))) 
-  if(length(v)==0) return(NA) 
-  v})
-w <- sp::SpatialPolygonsDataFrame(z, data.frame(country=q, row.names=names(z)))
-w@data %<>% tibble::rownames_to_column(var = "ID") %>% dplyr::left_join(data.melt.avg) %>% tibble::as_tibble() %>% tibble::column_to_rownames(var = "ID")
+highcharter::hchart(data.melt.avg, "scatter3d", highcharter::hcaes(x = education_discrepancy_avg, y = suicide_avg, z = babies_per_woman_avg), options3d = list(enabled = TRUE, alpha = 10, beta = 30, depth = 250, viewDistance = 5))
 ```
 
-```{r}
-pal.range <- leaflet::colorNumeric(
-  palette = "YlGnBu",
-  domain = w@data$gini_avg)
-pal.bin <- leaflet::colorBin(
-  palette = "YlGnBu",
-  domain = w@data$gini_avg,
-  bins = 3)
-pal.quan <- leaflet::colorQuantile(
-  palette = "YlGnBu",
-  domain = w@data$gini_avg,
-  n = 3)
 
-leaflet::leaflet(w)%>%
-  #leaflet::addProviderTiles("CartoDB.PositronNoLabels")%>%
-  leaflet::addPolygons(stroke = FALSE, smoothFactor = 0.2, fillOpacity = 1, color = ~pal.range(gini_avg), label = ~paste0(country,": ", gini_avg), group="Range")%>%
-  leaflet::addPolygons(stroke = FALSE, smoothFactor = 0.2, fillOpacity = 1, color = ~pal.quan(gini_avg), label = ~paste0(country,": ", gini_avg), group="Quantiles")%>%
-  leaflet::addLegend(position = "bottomright", pal = pal.range, values = ~gini_avg, title = "Range", group = "Range", layerId = "Range")%>%
-  leaflet::addLegend(position = "bottomright", pal = pal.quan, values = ~gini_avg, title = "Quantiles", group = "Quantiles", layerId = "Quantiles")%>%
-  leaflet::addLayersControl(baseGroups = c("Range", "Quantiles"), options = leaflet::layersControlOptions(collapsed = FALSE))%>%
-  htmlwidgets::onRender("
-    function() { 
-      var map = this;
-      var legends = map.controls._controlsById;
-      function addActualLegend() {
-         var sel = $('.leaflet-control-layers-base').find('input[type=\"radio\"]:checked').siblings('span').text().trim();
-         $.each(map.controls._controlsById, (nm) => map.removeControl(map.controls.get(nm)));
-         map.addControl(legends[sel]);
-      }
-      $('.leaflet-control-layers-base').on('click', addActualLegend);
-      addActualLegend();
-   }") %>%
-  leaflet::addEasyButton(leaflet::easyButton(
-    icon="fa-globe", title="Zoom to World View",
-    onClick=htmlwidgets::JS("function(btn, map){ map.setZoom(1); }"))) %>%
-  leaflet::addMiniMap(tiles = "CartoDB.PositronNoLabels", toggleDisplay = T)
+```{r echo=FALSE}
+data.melt.std.comb <- data.melt.standardized %>% 
+  dplyr::select(continent, gini, education_discrepancy, babies_per_woman, suicide) %>%
+  reshape2::melt(id="continent")
+  
+plot.violin(data.melt.std.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.std.comb, value, continent, variable)) %>%
+  hc.label("continent", "Standardized Value")
 ```
-

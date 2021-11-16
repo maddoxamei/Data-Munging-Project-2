@@ -2,6 +2,8 @@
 
 This project was completed in accordance with the requirements for the Applied Data Science course in the Data Science Masters program at New College of Florida.
 ```{r include=FALSE}
+library(magrittr)
+
 # Import all R scripts in the project directory
 rscripts <- list.files(pattern = ".R$", recursive = TRUE)
 

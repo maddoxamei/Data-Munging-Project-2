@@ -28,8 +28,8 @@ get.melted.dataset <- function(data.list){
     purrr::reduce(dplyr::full_join) %>% 
     dplyr::mutate_at(c("year"), 
                      function(col) as.numeric(sub("X", "", col))) %>%
-    filter_at(vars(-one_of(c("country", "year"))),
-              any_vars(!is.na(.))) %>%
+    dplyr::filter_at(dplyr::vars(-tidyselect::one_of(c("country", "year"))),
+              dplyr::any_vars(!is.na(.))) %>%
     dplyr::mutate_at(c("country"), as.factor)%>%
     tibble::as_tibble()
 }
@@ -68,7 +68,7 @@ append.regions <- function(data.melt){
   names(x) <- c("name", "country")
   
   mapdata %>% 
-    dplyr::select(name, continent, subregion, `hc-a2`) %>% 
+    dplyr::select(name, continent, subregion, "hc-a2") %>% 
     dplyr::right_join(x) %>%
     dplyr::right_join(data.melt) %>%
     dplyr::mutate_if(is.character, as.factor) %>%
