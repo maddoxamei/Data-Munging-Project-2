@@ -13,13 +13,16 @@ data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.
 
 ```{r}
 highcharter::hchart(data.melt.avg, "point",
-          highcharter::hcaes(education_avg, gini_avg, group = continent),
+          highcharter::hcaes(education_discrepancy_avg, gini_avg, group = continent),
           regression = TRUE, regressionSettings = list(hideInLegend = TRUE)) %>% 
   highcharter::hc_colors(RColorBrewer::brewer.pal(8, "Set1")) %>%
-  highcharter::hc_xAxis( max= data.melt.avg$education_avg %>% abs() %>% max(na.rm = T) %>% ceiling() ) %>%
+  highcharter::hc_xAxis( max= data.melt.avg$education_discrepancy_avg %>% abs() %>% max(na.rm = T) %>% ceiling() ) %>%
   highcharter::hc_add_dependency("plugins/highcharts-regression.js")
 ```
 
+```{r}
+highcharter::hchart(data.melt.avg, "scatter3d", highcharter::hcaes(x = education_discrepancy_avg, y = suicide_avg, z = babies_per_woman_avg), options3d = list(enabled = TRUE, alpha = 10, beta = 30, depth = 250, viewDistance = 5))
+```
 
 
 ```{r echo=FALSE}
