@@ -6,7 +6,7 @@ editor_options:
 # sdf
 
 #***REMAINING TO DO:
-  #Fix Legends
+  #Fix Legends (DONE)
   #Fix colors
   #Make graphs less ugly
   #Better explanation on later sections, possibly re-order
@@ -14,7 +14,8 @@ editor_options:
 In this section we're going to look at suicide rate per 100,000 as it relates
 to a country's gini index.  In the graph below, the distinct points are 20 year averages for each country, while the faded points are year data.
 ```{r}
-library(plotly)
+#***Temp palette, remove once group has agreed on one
+region_color<-c('red','orange','blue','green','light blue','grey','yellow')
 ggplot(data=data.melt.avg) +
   #20 year average
   geom_point(mapping=aes_string(
@@ -47,8 +48,6 @@ At a world-wide level, there does not appear to be a strong relationship between
 but if we look at correlation by continent, there is a clear standout.
 
 ```{r}
-#***Temp palette, remove once group has agreed on one
-region_color<-c('red','orange','blue','green','light blue','grey','yellow')
 
 #Regional correlation values
 continents.mat<-rbind(t(as.matrix(unique(data.melt$continent))),0)
