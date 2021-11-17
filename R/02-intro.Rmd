@@ -29,6 +29,10 @@ data.melt.standardized <- data.melt %>%
   dplyr::mutate_if(is.numeric, function(x) (x-mean(x, na.rm=T))/sd(x, na.rm=T))
 data.melt.standardized$year <- data.melt$year
 
+data.melt.yearly <- data.melt %>%
+  dplyr::group_by(year, continent) %>%
+  dplyr::summarise_if(is.numeric, list(avg = ~mean(.x, na.rm=TRUE)))
+
 region.color <- RColorBrewer::brewer.pal(8, "Set1")
 ```
 
