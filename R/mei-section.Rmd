@@ -13,34 +13,23 @@ highcharter::hchart(data.melt.avg, "point",
       pointFormat = "<b>{point.country}</b>
           <br/>{series.xAxis.axisTitle.textStr}: {point.x}
           <br/>{series.yAxis.axisTitle.textStr}: {point.y}
-          <br/>{series.yAxis.axisTitle.textStr}: {point.y}
           <br/>Boys: {point.education_boys_avg}
           <br/>Girls: {point.education_girls_avg}
           <br/>Income: {point.z}") %>%
-  hc.label("Education Discrepancy", "Gini Coefficient")
+  hc.label("Education Discrepancy", "Gini Coefficient", "Education to Income Inequality")
 ```
 
 # Quality of Life
-
-```{r}
-highcharter::highchart()%>%
-  highcharter::hc_yAxis_multiples(list(title = list(text = "Education Discrepancy", colorIndex=1)),list(title = list(text = "Gini Coeficient")),list(title = list(text = "Suicide"), opposite=T),list(title = list(text = "Babies"), opposite=T))%>%
-  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, gini, continent, name="Gini Coefficient", yAxis=1)) %>%
-  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, education_discrepancy, continent, name="Education Discrepancy", yAxis=0)) %>%
-  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, suicide, continent, name="Suicide", yAxis=2)) %>%
-  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, babies_per_woman, continent, name="Babies", yAxis=3)) 
-```
-
 
 ```{r violinplots, fig.cap="Inequality to Quality of Life", echo=FALSE}
 data.melt.comb <- data.melt %>% 
   dplyr::select(continent, gini, education_discrepancy, babies_per_woman, suicide) %>%
   reshape2::melt(id="continent")
   
-plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.comb, value, continent, variable)) %>%
+plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.comb, value, continent, variable), c(1, 0, 2, 3)) %>%
     highcharter::hc_yAxis_multiples(
-      list(title = list(text = "Education Discrepancy")),
+      list(title = list(text = "Education Discrepancy"), maxRange=1),
       list(title = list(text = "Gini Coeficient")),
-      list(title = list(text = "Suicide"), opposite=T),
-      list(title = list(text = "Babies"), opposite=T))
+      list(title = list(text = "Babies"), opposite=T),
+      list(title = list(text = "Suicide"), opposite=T))
 ```

@@ -2,7 +2,8 @@ opts <- getOption("highcharter.lang")
 opts$thousandsSep <- ","
 options(highcharter.lang = opts)
 
-plot.violin <- function(data, hc, var, group, subgroup, boxdata){
+plot.violin <- function(data, hc, var, group, subgroup, boxdata, yAxis=NULL){
+  if( is.null(yAxis) ) yAxis <- 0:(nrow(boxdata)-1)
   ds <- NULL
   # var <- deparse(substitute(var))
   # group <- deparse(substitute(group))
@@ -24,15 +25,16 @@ plot.violin <- function(data, hc, var, group, subgroup, boxdata){
       if( sum(!is.na(subset[[var]])) < 2 ) next
       density <- density(subset[[var]], na.rm=T)
       idx <- x.idx - (x2.inc/offset) + (x2.idx*x2.inc)
-      ds <- c(ds, list(list(data = cbind(density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=x2.idx, zIndex=2),
-                       list(data = cbind(-density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=x2.idx, zIndex=2)))
+      
+      ds <- c(ds, list(list(data = cbind(density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=yAxis[x2.idx+1], zIndex=2),
+                       list(data = cbind(-density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=yAxis[x2.idx+1], zIndex=2)))
       x2.idx <- x2.idx + 1
     }
     x.idx <- x.idx + 1
   }
   boxdata$zIndex <- 4
   hc %>% highcharter::hc_xAxis(type='category')%>%
-    highcharter::hc_add_series_list(boxdata %>% dplyr::mutate(yAxis=0:(nrow(boxdata)-1))) %>%
+    highcharter::hc_add_series_list(boxdata %>% dplyr::mutate(yAxis=yAxis)) %>%
     highcharter::hc_add_series_list(ds)%>%
     highcharter::hc_plotOptions(area = list(fillOpacity=0.3,
                                lineWidth=0, 
@@ -40,10 +42,7 @@ plot.violin <- function(data, hc, var, group, subgroup, boxdata){
                                tooltip=list(
                                  headerFormat = '<b>{series.name}</b><br />',
                                  pointFormat='{series.yAxis.axisTitle.textStr}: {point.y}<br/>
-                                              Density: {point.x}'),
-                               scatter = list(tooltip=list(
-                                 headerFormat = '<b>{point.x} Years</b><br />',
-                                 pointFormat='{series.yAxis.axisTitle.textStr}: {point.y}'))))
+                                              Density: {point.x}')))
 }
 
 hc.label <- function(hc, xlab, ylab,
