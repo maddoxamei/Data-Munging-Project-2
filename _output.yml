@@ -3,7 +3,7 @@ bookdown::gitbook:
   config:
     toc:
       before: |
-        <li><a href="./">College Scorecard Report</a></li>
+        <li><a href="./preface">Gapminder EDA</a></li>
     download: ["pdf", "epub"]
 bookdown::pdf_book:
   includes:
