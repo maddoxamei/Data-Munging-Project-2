@@ -43,3 +43,4 @@ vignettes/*.pdf
 /_bookdown_files/
 R/packages.bib
 R/ComprehensiveMeltedData.csv
+R/_main.Rmd

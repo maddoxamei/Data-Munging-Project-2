@@ -1,19 +1,28 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 # sdf
 
 #***REMAINING TO DO:
   #Fix Legends (DONE)
   #Fix colors
+    #Remove temp color palette (***)
   #Make graphs less ugly
+    #Africa sub-regions should be split into a panelled graph
+    #Regional correlations should be a graph.  Possible 2: Continents & Subregions
   #Better explanation on later sections, possibly re-order
-
+  #Remove this library section
+```{r}
+library(ggplot2)
+library(plotly)
+```
 In this section we're going to look at suicide rate per 100,000 as it relates
 to a country's gini index.  In the graph below, the distinct points are 20 year averages for each country, while the faded points are year data.
 ```{r}
+#Suicide rate by gini, average and yearly, worldwide.
+
 #***Temp palette, remove once group has agreed on one
 region_color<-c('red','orange','blue','green','light blue','grey','yellow')
 ggplot(data=data.melt.avg) +
@@ -49,7 +58,7 @@ but if we look at correlation by continent, there is a clear standout.
 
 ```{r}
 
-#Regional correlation values
+#Regional correlation values.
 continents.mat<-rbind(t(as.matrix(unique(data.melt$continent))),0)
 for(j in 1:7){ #Ideally should be ncol(continents.mat)-1 instead of 7.
   data.melt.filtered<-subset(data.melt,continent==continents.mat[1,j])
@@ -60,6 +69,21 @@ for(j in 1:7){ #Ideally should be ncol(continents.mat)-1 instead of 7.
     use = "pairwise.complete.obs"),3)
 }
 prmatrix(continents.mat[1:2,1:7],rowlab=rep("",2),collab=rep("",8))
+
+#Subregional correlation values.
+subregions.mat<-rbind(t(as.matrix(unique(data.melt$subregion))),0)
+subregions.mat
+ncol(subregions.mat)
+for(j in 1:23){ #Ideally should be ncol(continents.mat)-1 instead of 7.
+  data.melt.filtered<-subset(data.melt,subregion==subregions.mat[1,j])
+  colnames(data.melt.filtered)
+  subregions.mat[2,j]<-round(cor(
+    data.melt.filtered[,which(colnames(data.melt.filtered)=='gini')],
+    data.melt.filtered[,which(colnames(data.melt.filtered)=='suicide')],
+    use = "pairwise.complete.obs"),3)
+}
+prmatrix(subregions.mat[1:2,1:22],rowlab=rep("",2),collab=rep("",22))
+subregions.df<-data.frame(subregions.mat)
 ```
 
 Gini and suicide rate are very weakly correlated in most continents, except in Africa.  (The 'seven seas'
