@@ -1,8 +1,14 @@
 fig:giniavg
+fig:qualitycor
 fig:educationgini
 fig:violinplots
+fig:birthrate
+fig:birthrategini
+fig:lineplotsSubset
+fig:lineplots
 introduction
 income-inequality-to-quality-of-life
-quality-of-life-associations
 education
+quality-of-life-associations
+birth-rate
 quality-of-life
