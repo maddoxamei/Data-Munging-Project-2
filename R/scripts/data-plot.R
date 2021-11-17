@@ -1,3 +1,7 @@
+opts <- getOption("highcharter.lang")
+opts$thousandsSep <- ","
+options(highcharter.lang = opts)
+
 plot.violin <- function(data, hc, var, group, subgroup, boxdata){
   ds <- NULL
   # var <- deparse(substitute(var))
@@ -19,19 +23,17 @@ plot.violin <- function(data, hc, var, group, subgroup, boxdata){
       
       if( sum(!is.na(subset[[var]])) < 2 ) next
       density <- density(subset[[var]], na.rm=T)
-      if( length(grep("e", max(density$y))) == 0 ) multiple <- -1/10
-      else multiple <- -(as.numeric(gsub(".*e", "", max(density$y)))+1)
       idx <- x.idx - (x2.inc/offset) + (x2.idx*x2.inc)
-      ds <- c(ds, list(list(data = cbind(density$y*10^multiple+idx,density$x), name=x, type="area", colorIndex=x2.idx, zIndex=2),
-                       list(data = cbind(-density$y*10^multiple+idx,density$x), name=x, type="area", colorIndex=x2.idx, zIndex=2)))
+      ds <- c(ds, list(list(data = cbind(density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=x2.idx, zIndex=2),
+                       list(data = cbind(-density$y+idx,density$x), name=x, type="area", colorIndex=x2.idx, yAxis=x2.idx, zIndex=2)))
       x2.idx <- x2.idx + 1
     }
     x.idx <- x.idx + 1
   }
   boxdata$zIndex <- 4
   hc %>% highcharter::hc_xAxis(type='category')%>%
+    highcharter::hc_add_series_list(boxdata %>% dplyr::mutate(yAxis=0:(nrow(boxdata)-1))) %>%
     highcharter::hc_add_series_list(ds)%>%
-    highcharter::hc_add_series_list(boxdata) %>%
     highcharter::hc_plotOptions(area = list(fillOpacity=0.3,
                                lineWidth=0, 
                                linkedTo=':previous',

@@ -3,33 +3,44 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-# sdf
+# Education
 
-```{r eval=FALSE, include=FALSE}
-world.regions <- establish.regions(levels(data.melt$country))
-data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
-```
-
-
-```{r}
+```{r educationgini, fig.cap="Income Inequality to Education Inequality", echo=FALSE}
 highcharter::hchart(data.melt.avg, "point",
-          highcharter::hcaes(education_discrepancy_avg, gini_avg, group = continent),
-          regression = TRUE, regressionSettings = list(hideInLegend = TRUE)) %>% 
-  highcharter::hc_colors(RColorBrewer::brewer.pal(8, "Set1")) %>%
-  highcharter::hc_xAxis( max= data.melt.avg$education_discrepancy_avg %>% abs() %>% max(na.rm = T) %>% ceiling() ) %>%
-  highcharter::hc_add_dependency("plugins/highcharts-regression.js")
+          highcharter::hcaes(education_discrepancy_avg, gini_avg, z=income_avg, group = continent)) %>% 
+  highcharter::hc_colors(region.color)%>% 
+  highcharter::hc_plotOptions(bubble=list(minSize="1%",maxSize="10%")) %>% highcharter::hc_tooltip(
+      pointFormat = "<b>{point.country}</b>
+          <br/>{series.xAxis.axisTitle.textStr}: {point.x}
+          <br/>{series.yAxis.axisTitle.textStr}: {point.y}
+          <br/>{series.yAxis.axisTitle.textStr}: {point.y}
+          <br/>Boys: {point.education_boys_avg}
+          <br/>Girls: {point.education_girls_avg}
+          <br/>Income: {point.z}") %>%
+  hc.label("Education Discrepancy", "Gini Coefficient")
 ```
+
+# Quality of Life
 
 ```{r}
-highcharter::hchart(data.melt.avg, "scatter3d", highcharter::hcaes(x = education_discrepancy_avg, y = suicide_avg, z = babies_per_woman_avg), options3d = list(enabled = TRUE, alpha = 10, beta = 30, depth = 250, viewDistance = 5))
+highcharter::highchart()%>%
+  highcharter::hc_yAxis_multiples(list(title = list(text = "Education Discrepancy", colorIndex=1)),list(title = list(text = "Gini Coeficient")),list(title = list(text = "Suicide"), opposite=T),list(title = list(text = "Babies"), opposite=T))%>%
+  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, gini, continent, name="Gini Coefficient", yAxis=1)) %>%
+  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, education_discrepancy, continent, name="Education Discrepancy", yAxis=0)) %>%
+  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, suicide, continent, name="Suicide", yAxis=2)) %>%
+  highcharter::hc_add_series_list(highcharter::data_to_boxplot(data.melt, babies_per_woman, continent, name="Babies", yAxis=3)) 
 ```
 
 
-```{r echo=FALSE}
-data.melt.std.comb <- data.melt.standardized %>% 
+```{r violinplots, fig.cap="Inequality to Quality of Life", echo=FALSE}
+data.melt.comb <- data.melt %>% 
   dplyr::select(continent, gini, education_discrepancy, babies_per_woman, suicide) %>%
   reshape2::melt(id="continent")
   
-plot.violin(data.melt.std.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.std.comb, value, continent, variable)) %>%
-  hc.label("continent", "Standardized Value")
+plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.comb, value, continent, variable)) %>%
+    highcharter::hc_yAxis_multiples(
+      list(title = list(text = "Education Discrepancy")),
+      list(title = list(text = "Gini Coeficient")),
+      list(title = list(text = "Suicide"), opposite=T),
+      list(title = list(text = "Babies"), opposite=T))
 ```

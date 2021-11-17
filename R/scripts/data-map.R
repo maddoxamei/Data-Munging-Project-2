@@ -5,8 +5,10 @@ country.polygons <- function(data.names, country.names){
     
     if( x=="United States" ) country <- "USA"
     else if( x=="United Kingdom" ) country <- "UK"
-    else if( country=="Slovak Republic" ) country <- "Slovakia"
-    else if( country=="Kyrgyz Republic" ) country <- "Kyrgyzstan"
+    else if( x=="Slovak Republic" ) country <- "Slovakia"
+    else if( x=="Kyrgyz Republic" ) country <- "Kyrgyzstan"
+    else if( x=="British Virgin Islands") country <- "Virgin Islands, British"
+    else if( x=="Virgin Islands (U.S.)") country <- "Virgin Islands, US"
     else{
       country <- gsub("St\\.", "Saint", x)
       country <- gsub("\\.|the |Fed\\. Sts\\.", "", country)
@@ -24,18 +26,26 @@ country.polygons <- function(data.names, country.names){
   x$`Hong Kong, China` <- x$China[hong.kong]
   x$China <- x$China[-hong.kong]
   print(paste("Country not found:",names(x)[sapply(x, length)==0]))
-  return(x)
+  
+  x %>% reshape2::melt() %>% 
+    tibble::as_tibble()
 }
 
 establish.regions <- function(data.names){
   world.map <- maps::map("world", fill = TRUE, plot = FALSE)
   x <- country.polygons(data.names, world.map$names)
   z <- maptools::map2SpatialPolygons(world.map, IDs=world.map$names)
-  q <- sapply(names(z), function(wn){
-    v <- names(which(sapply(x, function(x){wn %in% x}))) 
-    if(length(v)==0) return(NA) 
-    v})
-  w <- sp::SpatialPolygonsDataFrame(z, data.frame(country=q, row.names=names(z)))
+  # q <- sapply(names(z), function(wn){
+  #   v <- names(which(sapply(x, function(x){wn %in% x}))) 
+  #   if(length(v)==0) return(NA) 
+  #   v})
+  # w <- sp::SpatialPolygonsDataFrame(z, data.frame(country=q, row.names=names(z)))
+  q <- names(z) %>% 
+    tibble::as_tibble() %>% 
+    dplyr::left_join(x) %>% 
+    dplyr::rename(country = L1) %>% 
+    tibble::column_to_rownames(var = "value")
+  w <- sp::SpatialPolygonsDataFrame(z, q)
   w@data %<>% 
     tibble::rownames_to_column(var = "ID") %>% 
     dplyr::left_join(data.melt.avg) %>% 
