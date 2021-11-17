@@ -8,7 +8,7 @@ editor_options:
 ```{r educationgini, fig.cap="Income Inequality to Education Inequality", echo=FALSE}
 highcharter::hchart(data.melt.avg, "point",
           highcharter::hcaes(education_discrepancy_avg, gini_avg, z=income_avg, group = continent)) %>% 
-  highcharter::hc_colors(RColorBrewer::brewer.pal(8, "Set1"))%>% 
+  highcharter::hc_colors(region.color)%>% 
   highcharter::hc_plotOptions(bubble=list(minSize="1%",maxSize="10%")) %>% highcharter::hc_tooltip(
       pointFormat = "<b>{point.country}</b>
           <br/>{series.xAxis.axisTitle.textStr}: {point.x}
