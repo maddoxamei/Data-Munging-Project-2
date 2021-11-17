@@ -1,0 +1,8 @@
+fig:giniavg
+fig:educationgini
+fig:violinplots
+introduction
+income-inequality-to-quality-of-life
+quality-of-life-associations
+education
+quality-of-life
