@@ -1,3 +1,7 @@
+opts <- getOption("highcharter.lang")
+opts$thousandsSep <- ","
+options(highcharter.lang = opts)
+
 plot.violin <- function(data, hc, var, group, subgroup, boxdata){
   ds <- NULL
   # var <- deparse(substitute(var))
