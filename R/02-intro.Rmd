@@ -29,3 +29,9 @@ data.melt.standardized <- data.melt %>%
   dplyr::mutate_if(is.numeric, function(x) (x-mean(x, na.rm=T))/sd(x, na.rm=T))
 data.melt.standardized$year <- data.melt$year
 ```
+
+
+```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE}
+world.regions <- establish.regions(levels(data.melt$country))
+data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
+```
