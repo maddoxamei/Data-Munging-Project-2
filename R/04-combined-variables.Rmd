@@ -1,1 +1,17 @@
 # Quality of Life Associations
+Up to now we have explored how each quality of life indicator is associated with income inequality. It is equally important to disect how the quality of life indicators interplay with eachother.
+
+Figure \@ref(fig:violinplots) illustrates the distribution of each indicator by region. The colored-polygons represent the density for a given value. The box and whisker plot within each colored-polygon depicts the non-outlier quartile values. Note the different axes scales for each indicator.
+
+```{r violinplots, fig.cap="Inequality to Quality of Life", echo=FALSE}
+data.melt.comb <- data.melt %>% 
+  dplyr::select(continent, gini, education_discrepancy, babies_per_woman, suicide) %>%
+  reshape2::melt(id="continent")
+  
+plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "variable", highcharter::data_to_boxplot(data.melt.comb, value, continent, variable), c(1, 0, 2, 3)) %>%
+    highcharter::hc_yAxis_multiples(
+      list(title = list(text = "Education Discrepancy"), maxRange=1),
+      list(title = list(text = "Gini Coeficient")),
+      list(title = list(text = "Babies"), opposite=T),
+      list(title = list(text = "Suicide"), opposite=T))
+```

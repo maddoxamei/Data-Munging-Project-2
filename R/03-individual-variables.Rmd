@@ -1,1 +1,28 @@
 # Income Inequality to Quality of Life
+```{r qualitycor, fig.cap="Correlation", echo=FALSE}
+data.melt %>% 
+  dplyr::select(gini, education_discrepancy, babies_per_woman, suicide) %>% 
+  cor(use="complete.obs") %>% 
+  highcharter::hchart(type="heatmap") %>%
+  highcharter::hc_plotOptions(heatmap=list(dataLabels=list(enabled=TRUE)))
+```
+
+## Education
+Academic education is thought to be correlated with job opportunity, and by extension potentially higher income. Primary education in particular occurs during a critical time in individuals lives. For some, this early education is more-so a luxury than a necessity. We therefore considered primary school completion rate as an indicator for quality of life and potential income inequality factor.
+
+Figure \@ref(fig:educationgini) illustrates said relationship. Primary school completion is measured as the ratio of new entrants to all age-relevant individuals for the last grade of primary school. This quantification method fails to account for individuals who dropout in the final year of primary education. As inequality is an overarching theme of interest to us, we focused on the primary school completion rate for boys compared to their girl counterparts - dubbed, "Eucation discrepancy."
+
+```{r educationgini, fig.cap="Income Inequality to Education Inequality", echo=FALSE}
+highcharter::hchart(data.melt.avg, "point",
+          highcharter::hcaes(education_discrepancy_avg, gini_avg, z=income_avg, group = continent)) %>% 
+  highcharter::hc_colors(region.color)%>% 
+  highcharter::hc_plotOptions(bubble=list(minSize="1%",maxSize="10%")) %>% highcharter::hc_tooltip(
+      pointFormat = "<b>{point.country}</b>
+          <br/>{series.xAxis.axisTitle.textStr}: {point.x}
+          <br/>{series.yAxis.axisTitle.textStr}: {point.y}
+          <br/>Relevant Age Group: {point.education_avg}
+          <br/>Boys: {point.education_boys_avg}
+          <br/>Girls: {point.education_girls_avg}
+          <br/>Income: {point.z}") %>%
+  hc.label("Education Discrepancy", "Gini Coefficient", "Education to Income Inequality")
+```
