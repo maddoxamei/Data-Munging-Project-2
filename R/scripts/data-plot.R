@@ -32,7 +32,7 @@ plot.violin <- function(data, hc, var, group, subgroup, boxdata){
   }
   boxdata$zIndex <- 4
   hc %>% highcharter::hc_xAxis(type='category')%>%
-    highcharter::hc_add_series_list(boxdata %>% mutate(yAxis=0:(nrow(boxdata)-1))) %>%
+    highcharter::hc_add_series_list(boxdata %>% dplyr::mutate(yAxis=0:(nrow(boxdata)-1))) %>%
     highcharter::hc_add_series_list(ds)%>%
     highcharter::hc_plotOptions(area = list(fillOpacity=0.3,
                                lineWidth=0, 
