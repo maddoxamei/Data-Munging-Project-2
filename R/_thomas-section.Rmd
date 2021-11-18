@@ -7,62 +7,80 @@ editor_options:
 
 #***REMAINING TO DO:
   #Fix Legends (DONE)
-  #Fix colors
-    #Remove temp color palette (***)
+  #Fix colors (DONE)
   #Make graphs less ugly
     #Africa sub-regions should be split into a panelled graph
     #Regional correlations should be a graph.  Possible 2: Continents & Subregions
   #Better explanation on later sections, possibly re-order
   #Remove this library section
+  
+  
+INDIVIDUAL VARIABLES
+## Suicide Rate 
 ```{r}
 library(ggplot2)
 library(plotly)
 ```
-In this section we're going to look at suicide rate per 100,000 as it relates
-to a country's gini index.  In the graph below, the distinct points are 20 year averages for each country, while the faded points are year data.
-```{r}
-#Suicide rate by gini, average and yearly, worldwide.
+Suicide is a complicated and delicate subject, influenced by a plethora of cultural, religious, and social factors.  These factors can have a strong influence on reporting, which may partially explain the gapminder.org dataset's somewhat odd definition, "Mortality due to self-inflicted injury", which is notably missing any element of intent.  In this section, we will be focusing purely on how the data presented is effected by income inequality via gini index.
 
-#***Temp palette, remove once group has agreed on one
-region_color<-c('red','orange','blue','green','light blue','grey','yellow')
-ggplot(data=data.melt.avg) +
-  #20 year average
+The following graph shows suicide rate (per 100,000 people) as a function as GINI, broken down by continent:
+```{r}
+#2D version
+data.melt.plot<-subset(data.melt,continent!='Seven seas (open ocean)')
+
+plot<-ggplot(data=data.melt.plot) +
   geom_point(mapping=aes_string(
-    x='gini_avg',
-    y='suicide_avg',
-    col='continent',
-    size=1,
-    alpha = .4
-  )) +
-  #Yearly
-  geom_point(data=data.melt,mapping=aes_string(
     x='gini',
     y='suicide',
     col='continent',
-    size=1,
-    alpha = .3
+    #size=.5,
+    alpha = .1,
+    label= 'country'
   )) +
   
-  #geom_smooth(se=FALSE,alpha=1,show.legend=FALSE)
-  
-  ggtitle(paste('Suicide rate by gini Index',sep='')) +
+  ggtitle(paste('Average Suicide Rate by gini Index',sep='')) +
   xlab('Gini Index') + xlim(25,65) +
-  ylab('Suicide Rate Per 100,000 People') + ylim(0,100) +
+  ylab('Suicide Rate Per 100,000 People') + ylim(0,70) +
   guides(size="none",alpha="none") +
   
-  scale_color_manual(values = region_color,na.translate=FALSE) +
+  scale_color_manual(values = region.color,na.translate=FALSE) +
   theme_dark()
-```
-At a world-wide level, there does not appear to be a strong relationship between the two variables,
-but if we look at correlation by continent, there is a clear standout.
 
+plot + facet_wrap(~continent,nrow=2,ncol=3)
+
+#ggplotly(plot)
+
+#3D version.
+#Rounding is for hovertemplate readability.  Makes points slightly stiff looking.
+data.melt.avg.rounded<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round)
+
+
+fig<-plotly::plot_ly(data.melt.avg.rounded,
+             x=~continent,y=~gini_avg,z=~suicide_avg,
+             color=~continent,colors=region.color,alpha=.8,
+             text=~country,
+             hovertemplate=paste('%{x}','%{text}','GINI:%{y}','SR:%{z}',sep='<br>'))
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(scene = list(xaxis = list(title = ''),
+                     yaxis = list(title = 'gini index'),
+                     zaxis = list(title = 'Suicide Rate')))
+fig <- fig %>% layout(title="Suicide Rate by GINI Index", showlegend = FALSE)
+fig
+
+```
+At the global level, there does not appear to be a strong relationship between the suicide rate and income inequality.  What is clear is that there are strong regional variations both in income inequality and suicide rate.
+
+Gini and suicide rate are very weakly correlated in most continents, except in Africa.  (The 'seven seas'
+continent in this case contains Seychelles and Mauritius, which fall into the East Africa subregion, and the Maldives, which fall under Asia.  We will be including Seychelles and Mauritius in Africa for this section, 
+for the sake of completeness.)
+
+Before going further, we also need to address Lesotho.  Lesotho is an interesting case study for this topic, being a small, low income, medium inequality country completely surrounded by a large, higher income, higher inequality country, its suicide rate (avg 61/100,000) is the highest in the world, almost 50% higher than the next highest country.  It is, in fact, so high that it makes some smaller graphs difficult to read.  Because of this, it will be omitted from here on.
 ```{r}
 
 #Regional correlation values.
 continents.mat<-rbind(t(as.matrix(unique(data.melt$continent))),0)
 for(j in 1:7){ #Ideally should be ncol(continents.mat)-1 instead of 7.
   data.melt.filtered<-subset(data.melt,continent==continents.mat[1,j])
-  colnames(data.melt.filtered)
   continents.mat[2,j]<-round(cor(
     data.melt.filtered[,which(colnames(data.melt.filtered)=='gini')],
     data.melt.filtered[,which(colnames(data.melt.filtered)=='suicide')],
@@ -72,102 +90,95 @@ prmatrix(continents.mat[1:2,1:7],rowlab=rep("",2),collab=rep("",8))
 
 #Subregional correlation values.
 subregions.mat<-rbind(t(as.matrix(unique(data.melt$subregion))),0)
-subregions.mat
-ncol(subregions.mat)
-for(j in 1:23){ #Ideally should be ncol(continents.mat)-1 instead of 7.
+for(j in 1:22){
   data.melt.filtered<-subset(data.melt,subregion==subregions.mat[1,j])
-  colnames(data.melt.filtered)
   subregions.mat[2,j]<-round(cor(
     data.melt.filtered[,which(colnames(data.melt.filtered)=='gini')],
     data.melt.filtered[,which(colnames(data.melt.filtered)=='suicide')],
     use = "pairwise.complete.obs"),3)
 }
-prmatrix(subregions.mat[1:2,1:22],rowlab=rep("",2),collab=rep("",22))
-subregions.df<-data.frame(subregions.mat)
+#prmatrix(subregions.mat[1:2,1:22],rowlab=rep("",2),collab=rep("",22))
+t(subregions.mat)
 ```
 
-Gini and suicide rate are very weakly correlated in most continents, except in Africa.  (The 'seven seas'
-continent in this case contains Seychelles and Mauritius, which fall into the East Africa subregion, and the Maldives, which fall under Asia.  We will be including Seychelles and Mauritius in Africa for this section, 
-for the sake of completeness.)
+
 
 ```{r}
 data.melt.africa<-subset(
-                  subset(data.melt,country!='Maldives')
+                  subset(data.melt.avg,country!='Maldives') # & country!='Lesotho' & country!='Eswatini'
                   ,continent %in% c('Africa','Seven seas (open ocean)'))
 data.melt.africa$continent<-'Africa'
 
 plot<-ggplot(data=data.melt.africa) +
   
   geom_point(mapping=aes_string(
-    x='gini',
-    y='suicide',
-    col='subregion',
-    size='income',
-    label='country',
-    alpha = .4
+    x='gini_avg',
+    y='suicide_avg',
+    col='subregion'
+    #size='income_avg',
+    #alpha = .8
+    #label='country',
   )) +
   
   ggtitle(paste('Suicide rate by gini Index',sep='')) +
   xlab('Gini Index') + xlim(25,65)+
-  ylab('Suicide Rate Per 100,000 People') + ylim(0,100)+
+  ylab('Suicide Rate Per 100,000 People') + ylim(0,45)+
   guides(size="none",alpha="none") +
   
-  scale_color_manual(values = region_color,na.translate=FALSE) +
-  theme_dark()
-ggplotly(plot)
+  scale_color_manual(values = region.color,na.translate=FALSE) #+
+  #theme_dark()
+
+plot + facet_wrap(~subregion,nrow=2,ncol=3)
 ```
-In this graph, we've related the size of each point to average income in that country.  From this, we can see that Southern Africa stands out from the rest in terms of income, gini, and the concerning spike in suicide rates in the center.
-
-The 'spike' in the center is actually from just two countries: Lesotho and Eswatini/Swaziland.  Lesotho, which makes up most of our spike, stands out as having a much lower per capita income than other parts of Southern Africa, and a considerably better (lower) gini index.  
+When broken down by subregion, we can see that the general correlation between increased income inequality and increased suicide rate holds, except in Southern Africa.  The following graph, this time using income instead of inequality, may point to a possible answer:
 ```{r}
-cor.val<-round(cor(data.melt.africa$gini,data.melt.africa$suicide,use = "pairwise.complete.obs"),3)
+data.melt.africa<-subset(
+                  subset(data.melt.avg,country!='Maldives') # & country!='Lesotho' & country!='Eswatini'
+                  ,continent %in% c('Africa','Seven seas (open ocean)'))
+data.melt.africa$continent<-'Africa'
 
-plot<-ggplot(data=subset(data.melt.africa,continent=='Africa' & country!='Lesotho' & country!='Eswatini')) +
+plot<-ggplot(data=data.melt.africa) +
   
   geom_point(mapping=aes_string(
-    x='gini',
-    y='suicide',
-    col='subregion',
-    size='income',
-    label='country',
-    alpha = .4
+    x='income_avg',
+    y='suicide_avg',
+    col='subregion'
+    #size='income_avg',
+    #alpha = .8
+    #label='country',
   )) +
   
-  ggtitle(paste('Suicide rate by gini Index, outliers removed (correlation:',cor.val,')','sep'='')) +
-  
-  xlab('Gini Index') + xlim(30,70)+
-  ylab('Suicide Rate Per 100,000 People') + ylim(0,40)+
+  ggtitle(paste('Suicide rate by Income',sep='')) +
+  xlab('Income') + #xlim(25,65)+
+  ylab('Suicide Rate Per 100,000 People') + ylim(0,45)+
   guides(size="none",alpha="none") +
   
-  scale_color_manual(values = region_color,na.translate=FALSE) +
-  theme_dark()
+  scale_color_manual(values = region.color,na.translate=FALSE) #+
+  #theme_dark()
 
-ggplotly(plot)
+plot + facet_wrap(~subregion,nrow=2,ncol=3)
 ```
-Having removed that outlier, we can see that the correlation between the two remains similar.
 
 
 ```{r}
-data.melt.cleaned<-subset(data.melt, country!='Lesotho' & country!='Eswatini')
-plot<-ggplot(data=data.melt.cleaned) +
+plot<-ggplot(data=data.melt) +
   
   geom_point(,mapping=aes_string(
     x='gini',
     y='suicide',
     col='continent',
-    size='income',
     label='country',
     alpha = .3
   )) +
   
-  ggtitle(paste('Suicide rate by gini Index',sep='')) +
+  ggtitle(paste('Suicide rate by gini Index, grouped by Income',sep='')) +
   xlab('Gini Index') + xlim(25,65)+
   ylab('Suicide Rate Per 100,000 People') + ylim(0,40)+
   guides(size="none",alpha="none") +
   
-  scale_color_manual(values = region_color,na.translate=FALSE) +
+  scale_color_manual(values = region.color,na.translate=FALSE) +
   theme_dark()
 
 ggplotly(plot)
 ```
-To loop back around to the world as a whole, this is the original graph with Lesotho/Eswatini removed.  Although continental differences in terms of economic disparity are clear, there is no clear worldwide relationship between economic disparity and suicide rate.
+To loop back around to the world as a whole, this is the original graph with Lesotho/Eswatini removed.  Although relationships
