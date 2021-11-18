@@ -42,17 +42,16 @@ plotly::ggplotly(g)
 
 ## Suicide Rate
 ```{r suicidegini, fig.cap="Income Inequality to Suicide Rate", echo = FALSE}
-data.melt.avg.rounded<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round) #For hovertemplate readability.
-
-fig<-plotly::plot_ly(data.melt.avg.rounded,
+fig<- data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2) %>% #For hovertemplate readability.
+  plotly::plot_ly(
              x=~continent,y=~gini_avg,z=~suicide_avg,
              color=~continent,colors=region.color,alpha=.8,
              text=~country,
              hovertemplate=paste('%{x}','%{text}','GINI:%{y}','SR:%{z}',sep='<br>'))
 fig <- fig %>% plotly::add_markers()
-fig <- fig %>% layout(scene = list(xaxis = list(title = ''),
+fig <- fig %>% plotly::layout(scene = list(xaxis = list(title = ''),
                      yaxis = list(title = 'gini index'),
                      zaxis = list(title = 'Suicide Rate')))
-fig <- fig %>% layout(title="Suicide Rate by GINI Index", showlegend = FALSE)
+fig <- fig %>% plotly::layout(title="Suicide Rate by GINI Index", showlegend = FALSE)
 fig
-
+```

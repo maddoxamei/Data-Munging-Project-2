@@ -182,3 +182,38 @@ plot<-ggplot(data=data.melt) +
 ggplotly(plot)
 ```
 To loop back around to the world as a whole, this is the original graph with Lesotho/Eswatini removed.  Although relationships
+
+
+
+
+```{r variableComparison, fig.cap = "Individual Variables by GINI Index", echo = FALSE}
+#Sets variables used, category names, and scaling.
+data.cat<-cbind(data.melt.avg$country,data.melt.avg$gini_avg,data.melt.avg$poverty_avg,'Poverty')
+data.cat<-rbind(data.cat,
+                cbind(data.melt.avg$country,data.melt.avg$gini_avg,(data.melt.avg$education_avg*.66),'Education (2/3)'))
+data.cat<-rbind(data.cat,
+                cbind(data.melt.avg$country,data.melt.avg$gini_avg,(data.melt.avg$suicide_avg*2),'Suicides per 100,00 (x2)'))
+data.cat<-rbind(data.cat,
+                cbind(data.melt.avg$country,data.melt.avg$gini_avg,(data.melt.avg$babies_per_woman_avg*10),'Average Babies per Woman (x10)'))
+
+colnames(data.cat)<-c('country','gini','values','type')
+data.cat<-data.frame(data.cat)
+data.cat$gini<-as.numeric(data.cat$gini)
+data.cat$values<-as.numeric(data.cat$values)
+
+data.melt.avg %>% dplyr::mutate_if(is.numeric, function(x) (x-mean(x, na.rm=T))/sd(x, na.rm=T))
+plot<-ggplot2::ggplot(data=data.cat) +
+  ggplot2::geom_point(mapping=aes_string(
+    x='gini',
+    y='values',
+    alpha = .3
+  )) +
+  ggplot2::ggtitle(paste('Individual Variables by GINI Index',sep='')) +
+  ggplot2::xlab('GINI Index') + xlim(25,75) +
+  ggplot2::ylab('Adjusted Values') + ylim(0,100) +
+  ggplot2::guides(size="none",alpha="none") +
+  ggplot2::scale_color_manual(values = region.color,na.translate=FALSE) +
+  ggplot2::theme_minimal()
+
+plot + ggplot2::facet_wrap(~type,nrow=2,ncol=2)
+```
