@@ -16,25 +16,62 @@ plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "var
       list(title = list(text = "Suicide"), opposite=T))
 ```
 
-```{r lineplotsSubset, fig.cap = "Quality of Life over Time", echo = FALSE}
+```{r lineplots, fig.cap="Quality of Life over Time", echo = FALSE}
 data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
 
-require(gridExtra)
-plot1 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
-  ggplot2::geom_line(ggplot2::aes(y=suicide_avg)) + ggplot2::ylab("suicide rate") 
-plot2 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
-  ggplot2::geom_line(ggplot2::aes(y=babies_per_woman_avg)) + ggplot2::ylab("babies per woman") 
-plot3 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
-  ggplot2::geom_line(ggplot2::aes(y=education_discrepancy_avg)) + ggplot2::ylab("Education inequality") 
-plot4 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
-  ggplot2::geom_line(ggplot2::aes(y=gini_avg)) + ggplot2::ylab("Gini coefficient") 
+fig.education <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Education Discrepancy: ", data$education_discrepancy_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~education_discrepancy_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Education Discrepancy"))
 
-plot_new <- ggpubr::ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+fig.suicide <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Suicide: ", data$suicide_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~suicide_avg) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Suicide"))
 
-ggpubr::annotate_figure(plot_new, top = ggpubr::text_grob("Quality of Life over Time",
-               color = "black", size = 14))
+fig.babies <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Babies: ", data$babies_per_woman_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~babies_per_woman_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Babies Per Woman"))
 
+fig.gini <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Gini Coefficient: ", data$gini_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~gini_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient")) 
+
+fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.01,0.1,0.1)) %>% plotly::layout(title = "Quality of Life over Time")
+
+fig
 ```
+
 ```{r}
 fig<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2)%>%
   plotly::plot_ly(
