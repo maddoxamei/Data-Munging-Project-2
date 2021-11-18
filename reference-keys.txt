@@ -4,8 +4,10 @@ fig:educationgini
 fig:birthrategini
 fig:violinplots
 fig:lineplotsSubset
+fig:qualityoflifetime
 introduction
 income-inequality-to-quality-of-life
 education
 birth-rate
 quality-of-life-associations
+quality-of-life
