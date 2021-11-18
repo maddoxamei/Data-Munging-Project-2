@@ -2,6 +2,7 @@ fig:giniavg
 fig:qualitycor
 fig:educationgini
 fig:birthrategini
+fig:suicidegini
 fig:violinplots
 fig:lineplotsSubset
 fig:qualityoflifetime
@@ -9,5 +10,6 @@ introduction
 income-inequality-to-quality-of-life
 education
 birth-rate
+suicide-rate
 quality-of-life-associations
 quality-of-life
