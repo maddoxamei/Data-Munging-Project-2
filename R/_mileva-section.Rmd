@@ -1,0 +1,274 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# Birth Rate
+
+Distribution of birth rates by continent
+```{r birthrate, fig.cap="Distribution of Birth Rates by Continent", echo = FALSE}
+# Cut this distribution plot
+ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
+       ggplot2::aes(x = babies_per_woman_avg, y = forcats::fct_rev(as.factor(continent)), fill = ..x..)) +
+  ggridges::geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) + 
+  ggplot2::scale_fill_gradient2(low = "blue", high = "red") +
+  ggplot2::xlab("Babies per woman") +
+  ggplot2::ylab("") +
+  ggplot2::ggtitle("Distribution of babies per woman") +
+  ggplot2::theme_bw() +
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
+```
+
+Scatter plots of birth rates by country
+```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
+# Good - update color scheme
+g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
+            ggplot2::aes(x = babies_per_woman_avg, y = gini_avg, col = continent,  size = income_avg)) + 
+  ggplot2::geom_point(alpha = 0.7) + ggplot2::xlab("Babies per woman") + 
+  ggplot2::ylab("Gini coefficient") +
+  ggplot2::ggtitle("Gini coefficient vs. babies per woman") + 
+  ggplot2::theme_bw() + 
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) 
+
+plotly::ggplotly(g)
+```
+
+
+
+# Quality of Life 
+
+```{r}
+data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+
+fig.education <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Education Discrepancy: ", data$education_discrepancy_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~education_discrepancy_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Education Discrepancy"))
+
+fig.suicide <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Suicide: ", data$suicide_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~suicide_avg) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Suicide"))
+
+fig.babies <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Babies: ", data$babies_per_woman_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~babies_per_woman_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Babies Per Woman"))
+
+fig.gini <- data %>%
+  plotly::group_by(continent) %>%
+  plotly::plot_ly(x = ~year, color = ~continent, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  legendgroup = ~continent, 
+                  hovertext = paste("Gini Coefficient: ", data$gini_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                  hoverinfo = "text") %>%
+  plotly::add_lines(y = ~gini_avg, showlegend = FALSE) %>%
+  plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient")) 
+
+fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=1, titleY = TRUE, margin = c(0.085,0.01,0.1,0.1)) %>% plotly::layout(title = "Quality of Life over Time")
+
+fig
+```
+
+-- cut everything below --
+
+
+```{r}
+data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+
+fig.suicide <- plotly::plot_ly(type = "scatter", 
+                       x = ~ data$year, 
+                       y = ~ data$suicide_avg, 
+                       color = ~data$continent, 
+                       colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                       mode = "lines", 
+                       hovertext = paste("Suicide: ", data$suicide_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text"
+                       ) %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Suicide"))
+
+fig.babies <- plotly::plot_ly(type = "scatter", 
+                       x = ~ data$year, 
+                       y = ~ data$babies_per_woman_avg, 
+                       color = ~data$continent, 
+                       colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                       mode = "lines", 
+                       hovertext = paste("Babies per Woman: ", data$babies_per_woman_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text"
+                       ) %>% plotly::add_lines(showLegend = FALSE) %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Babies Per Woman"))
+
+fig <- plotly::subplot(fig.suicide, fig.babies, nrows = 2) %>% plotly::layout(title = "Quality of Life over Time")
+fig
+```
+
+
+```{r}
+data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+
+fig.suicide <- plotly::plot_ly(type = "scatter", 
+                       x = ~ data$year, 
+                       y = ~ data$suicide_avg, 
+                       hovertext = paste("Suicide: ", data$suicide_avg, 
+                                    "<br>Year: ", data$year, 
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text", 
+                       mode = "lines", 
+                       transforms = list(
+                         list(
+                           type = "groupby", 
+                           groups = data$continent, 
+                           styles = list(
+                             list(target = "Africa", value = list(line =list(color = '#E41A1C'))), 
+                             list(target = "Asia", value = list(line =list(color = '#377EB8'))),
+                             list(target = "Europe", value = list(line =list(color = '#4DAF4A'))),
+                             list(target = "North America", value = list(line =list(color = '#984EA3'))),
+                             list(target = "South America", value = list(line =list(color = '#A65628')))
+                             )
+                           )
+                       )
+)
+# fig.suicide <- fig.suicide %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Suicide"))
+
+
+fig.babies <- plotly::plot_ly(type = "scatter",
+                       x = ~ data$year,
+                       y = ~ data$babies_per_woman_avg,
+                       hovertext = paste("Babies: ", data$babies_per_woman_avg,
+                                    "<br>Year: ", data$year,
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text",
+                       mode = "lines",
+                       transforms = list(
+                         list(
+                           type = "groupby",
+                           groups = data$continent,
+                           styles = list(
+                             list(target = "Africa", value = list(line =list(color = '#E41A1C'))),
+                             list(target = "Asia", value = list(line =list(color = '#377EB8'))),
+                             list(target = "Europe", value = list(line =list(color = '#4DAF4A'))),
+                             list(target = "North America", value = list(line =list(color = '#984EA3'))),
+                             list(target = "South America", value = list(line =list(color = '#A65628')))
+                             )
+                           )
+                       )
+)
+# fig.babies<- fig.babies %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Babies per Woman"))
+
+fig.education <- plotly::plot_ly(type = "scatter",
+                       x = ~ data$year,
+                       y = ~ data$education_discrepancy_avg,
+                       hovertext = paste("Education Discrepancy: ", data$education_discrepancy_avg,
+                                    "<br>Year: ", data$year,
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text",
+                       mode = "lines",
+                       transforms = list(
+                         list(
+                           type = "groupby",
+                           groups = data$continent,
+                           styles = list(
+                             list(target = "Africa", value = list(line =list(color = '#E41A1C'))),
+                             list(target = "Asia", value = list(line =list(color = '#377EB8'))),
+                             list(target = "Europe", value = list(line =list(color = '#4DAF4A'))),
+                             list(target = "North America", value = list(line =list(color = '#984EA3'))),
+                             list(target = "South America", value = list(line =list(color = '#A65628')))
+                             )
+                           )
+                       )
+)
+fig.education<- fig.education %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Education Discrepancy"))
+
+fig.gini <- plotly::plot_ly(type = "scatter",
+                       x = ~ data$year,
+                       y = ~ data$gini_avg,
+                       hovertext = paste("Gini Coefficient: ", data$gini_avg,
+                                    "<br>Year: ", data$year,
+                                    "<br>Continent: ", data$continent),
+                       hoverinfo = "text",
+                       mode = "lines",
+                       transforms = list(
+                         list(
+                           type = "groupby",
+                           groups = data$continent,
+                           styles = list(
+                             list(target = "Africa", value = list(line =list(color = '#E41A1C'))),
+                             list(target = "Asia", value = list(line =list(color = '#377EB8'))),
+                             list(target = "Europe", value = list(line =list(color = '#4DAF4A'))),
+                             list(target = "North America", value = list(line =list(color = '#984EA3'))),
+                             list(target = "South America", value = list(line =list(color = '#A65628')))
+                             )
+                           )
+                       )
+)
+fig.gini<- fig.gini %>% plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient"))
+
+fig <- plotly::subplot(fig.suicide, fig.babies, nrows = 2) %>% plotly::layout(title = "Quality of Life over Time")
+fig
+```
+
+
+```{r lineplotsSubset, fig.cap = "Inequality to Quality of Life (subset)", echo = FALSE}
+# Create a plotly line plot instead
+data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+
+require(gridExtra)
+plot1 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=suicide_avg)) + ggplot2::ylab("suicide rate") 
+plot2 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=babies_per_woman_avg)) + ggplot2::ylab("babies per woman") 
+plot3 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=education_discrepancy_avg)) + ggplot2::ylab("Education inequality") 
+plot4 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=gini_avg)) + ggplot2::ylab("Gini coefficient") 
+
+ggpubr::ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+
+# plot <- ggpubr::annotate_figure(plot, top = ggpubr::text_grob("Variables of interest over time",
+#                color = "black", size = 14))
+
+```
+
+```{r lineplots, fig.cap = "Inequality to Quality of Life", echo = FALSE}
+data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Europe", "Asia"))
+
+require(gridExtra)
+plot1 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=suicide_avg)) + ggplot2::ylab("suicide rate") 
+plot2 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=babies_per_woman_avg)) + ggplot2::ylab("babies per woman") 
+plot3 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=education_discrepancy_avg)) + ggplot2::ylab("Education inequality") 
+plot4 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = continent)) +
+  ggplot2::geom_line(ggplot2::aes(y=gini_avg)) + ggplot2::ylab("Gini coefficient") 
+
+ggpubr::ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
+
+# annotate_figure(plot_new, top = text_grob("Variables of interest over time",
+#                color = "black", size = 14))
+```
