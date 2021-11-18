@@ -3,40 +3,10 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 ---
-# Birth Rate
-
-Distribution of birth rates by continent
-```{r birthrate, fig.cap="Distribution of Birth Rates by Continent", echo = FALSE}
-# Cut this distribution plot
-ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
-       ggplot2::aes(x = babies_per_woman_avg, y = forcats::fct_rev(as.factor(continent)), fill = ..x..)) +
-  ggridges::geom_density_ridges_gradient(scale = 3, rel_min_height = 0.01) + 
-  ggplot2::scale_fill_gradient2(low = "blue", high = "red") +
-  ggplot2::xlab("Babies per woman") +
-  ggplot2::ylab("") +
-  ggplot2::ggtitle("Distribution of babies per woman") +
-  ggplot2::theme_bw() +
-  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5))
-```
-
-Scatter plots of birth rates by country
-```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
-# Good - update color scheme
-g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
-            ggplot2::aes(x = babies_per_woman_avg, y = gini_avg, col = continent,  size = income_avg)) + 
-  ggplot2::geom_point(alpha = 0.7) + ggplot2::xlab("Babies per woman") + 
-  ggplot2::ylab("Gini coefficient") +
-  ggplot2::ggtitle("Gini coefficient vs. babies per woman") + 
-  ggplot2::theme_bw() + 
-  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) 
-
-plotly::ggplotly(g)
-```
-
 
 # Quality of Life 
 
-```{r}
+```{r qualityoflifetime, fig.cap="Quality of Life over Time", echo = FALSE}
 data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
 
 fig.education <- data %>%
