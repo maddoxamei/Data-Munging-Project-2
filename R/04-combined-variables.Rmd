@@ -31,7 +31,4 @@ plot4 <- ggplot2::ggplot(tidyr::drop_na(data), ggplot2::aes(x=year, col = contin
 
 ggpubr::ggarrange(plot1, plot2, plot3, plot4, ncol=4, nrow=1, common.legend = TRUE, legend="bottom")
 
-# plot <- ggpubr::annotate_figure(plot, top = ggpubr::text_grob("Variables of interest over time",
-#                color = "black", size = 14))
-
 ```
