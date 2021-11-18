@@ -41,3 +41,13 @@ region.color <- RColorBrewer::brewer.pal(8, "Set1")
 world.regions <- establish.regions(levels(data.melt$country))
 data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
 ```
+
+
+```{r qualitycor, fig.cap="Correlation", echo=FALSE}
+data.melt %>% 
+  dplyr::select(gini, education_discrepancy, babies_per_woman, suicide) %>% 
+  cor(use="complete.obs") %>% 
+  round(4) %>%
+  highcharter::hchart(type="heatmap") %>%
+  highcharter::hc_plotOptions(heatmap=list(dataLabels=list(enabled=TRUE)))
+```

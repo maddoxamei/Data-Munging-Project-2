@@ -1,12 +1,9 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
 # Income Inequality to Quality of Life
-```{r qualitycor, fig.cap="Correlation", echo=FALSE}
-data.melt %>% 
-  dplyr::select(gini, education_discrepancy, babies_per_woman, suicide) %>% 
-  cor(use="complete.obs") %>% 
-  highcharter::hchart(type="heatmap") %>%
-  highcharter::hc_plotOptions(heatmap=list(dataLabels=list(enabled=TRUE)))
-```
-
 ## Education
 Academic education is thought to be correlated with job opportunity, and by extension potentially higher income. Primary education in particular occurs during a critical time in individuals lives. For some, this early education is more-so a luxury than a necessity. We therefore considered primary school completion rate as an indicator for quality of life and potential income inequality factor.
 
