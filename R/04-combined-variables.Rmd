@@ -1,6 +1,21 @@
 # Quality of Life Associations
 Up to now we have explored how each quality of life indicator is associated with income inequality. It is equally important to disect how the quality of life indicators interplay with eachother.
 
+```{r}
+fig<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2)%>%
+  plotly::plot_ly(
+             x=~education_discrepancy_avg,y=~babies_per_woman_avg,z=~suicide_avg,
+             color=~continent,colors=region.color,alpha=.8,
+             text=~country,
+             hovertemplate=paste('%{x}','%{text}','GINI:%{y}','SR:%{z}',sep='<br>'))
+fig <- fig %>% plotly::add_markers()
+fig <- fig %>% plotly::layout(scene = list(xaxis = list(title = 'Education Discrepancy'),
+                     yaxis = list(title = 'Babies per Woman'),
+                     zaxis = list(title = 'Suicide Rate')))
+fig <- fig %>% plotly::layout(title="Suicide Rate by GINI Index", showlegend = T)
+fig
+```
+
 Figure \@ref(fig:violinplots) illustrates the distribution of each indicator by region. The colored-polygons represent the density for a given value. The box and whisker plot within each colored-polygon depicts the non-outlier quartile values. Note the different axes scales for each indicator.
 
 ```{r violinplots, fig.cap="Inequality to Quality of Life", echo=FALSE}
@@ -17,12 +32,13 @@ plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "var
 ```
 
 ```{r lineplots, fig.cap="Quality of Life over Time", echo = FALSE}
-data <- data.melt.yearly %>% dplyr::filter(continent %in% c("Africa", "Asia", "Europe", "North America", "South America"))
+data <- data.melt.yearly
 
 fig.education <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  # colors = region.color, 
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),
                   legendgroup = ~continent, 
                   hovertext = paste("Education Discrepancy: ", data$education_discrepancy_avg, 
                                     "<br>Year: ", data$year, 
@@ -34,7 +50,8 @@ fig.education <- data %>%
 fig.suicide <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  # colors = region.color,
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),                  
                   legendgroup = ~continent, 
                   hovertext = paste("Suicide: ", data$suicide_avg, 
                                     "<br>Year: ", data$year, 
@@ -46,7 +63,8 @@ fig.suicide <- data %>%
 fig.babies <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  # colors = region.color,
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"), 
                   legendgroup = ~continent, 
                   hovertext = paste("Babies: ", data$babies_per_woman_avg, 
                                     "<br>Year: ", data$year, 
@@ -58,7 +76,8 @@ fig.babies <- data %>%
 fig.gini <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', '#A65628'),
+                  # colors = region.color,
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),                  
                   legendgroup = ~continent, 
                   hovertext = paste("Gini Coefficient: ", data$gini_avg, 
                                     "<br>Year: ", data$year, 
@@ -67,23 +86,10 @@ fig.gini <- data %>%
   plotly::add_lines(y = ~gini_avg, showlegend = FALSE) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient")) 
 
-fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.01,0.1,0.1)) %>% plotly::layout(title = "Quality of Life over Time")
+fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.075,0.1,0.1)) %>% plotly::layout(title = "Quality of Life over Time")
 
 fig
 ```
 
-```{r}
-fig<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2)%>%
-  plotly::plot_ly(
-             x=~education_discrepancy_avg,y=~babies_per_woman_avg,z=~suicide_avg,
-             color=~continent,colors=region.color,alpha=.8,
-             text=~country,
-             hovertemplate=paste('%{x}','%{text}','GINI:%{y}','SR:%{z}',sep='<br>'))
-fig <- fig %>% plotly::add_markers()
-fig <- fig %>% plotly::layout(scene = list(xaxis = list(title = 'Education Discrepancy'),
-                     yaxis = list(title = 'Babies per Woman'),
-                     zaxis = list(title = 'Suicide Rate')))
-fig <- fig %>% plotly::layout(title="Suicide Rate by GINI Index", showlegend = T)
-fig
-```
+
 

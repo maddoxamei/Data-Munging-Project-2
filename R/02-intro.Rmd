@@ -37,7 +37,7 @@ region.color <- RColorBrewer::brewer.pal(8, "Set1")
 ```
 
 
-```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE}
+```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
 data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
 ```
@@ -45,7 +45,7 @@ data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.
 
 ```{r qualitycor, fig.cap="Correlation", echo=FALSE}
 data.melt %>% 
-  dplyr::select(gini, education_discrepancy, babies_per_woman, suicide) %>% 
+  dplyr::select(gini, education_discrepancy, babies_per_woman, suicide, income) %>% 
   cor(use="complete.obs") %>% 
   round(4) %>%
   highcharter::hchart(type="heatmap") %>%

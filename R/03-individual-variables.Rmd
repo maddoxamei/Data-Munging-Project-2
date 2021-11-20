@@ -32,7 +32,8 @@ g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg),
   ggplot2::ylab("Gini coefficient") +
   ggplot2::ggtitle("Birth Rate to Income Inequality") + 
   ggplot2::theme_bw() + 
-  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) 
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + 
+  ggplot2::scale_color_manual(values = region.color)
 
 plotly::ggplotly(g)
 ```
