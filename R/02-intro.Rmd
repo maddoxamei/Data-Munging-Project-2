@@ -19,7 +19,7 @@ write.csv(data.melt, "ComprehensiveMeltedData.csv", row.names=F)
 ```
 
 
-```{r include=FALSE}
+```{r include=FALSE, warning = FALSE}
 data.melt <- read.csv("ComprehensiveMeltedData.csv") %>%
   tibble::as_tibble() %>%
   dplyr::mutate_if(is.character, as.factor)
@@ -39,7 +39,10 @@ data.melt.yearly <- data.melt %>%
 region.color <- RColorBrewer::brewer.pal(8, "Set1")
 ```
 
-As our primary metric, we selected the Gini coefficient. The Gini coefficient represents income inequality on a scale from 0 to 100, where 0 corresponds to complete equality and 100 corresponds to complete inequality. To begin our analysis, we studied the distribution of income inequality across the world as shown in the interactive map below. 
+As our primary metric, we selected the Gini coefficient. The Gini coefficient represents income inequality on a scale from 0 to 100, where 0 corresponds to complete equality and 100 corresponds to complete inequality. To begin our analysis, we studied the distribution of income inequality across the world as shown in the map below.   
+
+> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
+> All graphs and visualizations in our report are interactive. Scroll over the data within the plots to obtain statistics for each country.  
 
 ```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
@@ -62,8 +65,8 @@ data.melt %>%
 ```
 
 A dark blue signifies a strong positive correlation, a dark red signifies a strong negative correlation, and white represents a weak correlation. Thus, the heatmap introduces some possible associations between our variables:   
-* Birth rate is strongly positively correlated with both education and income inequality,  
-* Suicide is negatively associated with education inequality, birth rate, and income inequality, and  
-* Income is strongly negatively correlated with both birth rate and income inequality.  
+  * Birth rate is strongly positively correlated with both education and income inequality,  
+  * Suicide is negatively associated with education inequality, birth rate, and income inequality, and  
+  * Income is strongly negatively correlated with both birth rate and income inequality.  
 
 In the next sections, we explore these initial findings in greater depth. First, we focus on how birth rate, education inequality, and suicide relate to the Gini coefficient individually. Then, we continue our exploration of how all the variables connect and influence one other.  
