@@ -28,8 +28,8 @@ highcharter::hchart(data.melt.avg, "point",
 ```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
 g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
             ggplot2::aes(x = babies_per_woman_avg, y = gini_avg, col = continent,  size = income_avg)) + 
-  ggplot2::geom_point(alpha = 0.7) + ggplot2::xlab("Babies per woman") + 
-  ggplot2::ylab("Gini coefficient") +
+  ggplot2::geom_point(alpha = 0.7) + ggplot2::xlab("Babies Per Woman") + 
+  ggplot2::ylab("Gini Coefficient") +
   ggplot2::ggtitle("Birth Rate to Income Inequality") + 
   ggplot2::theme_bw() + 
   ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + 

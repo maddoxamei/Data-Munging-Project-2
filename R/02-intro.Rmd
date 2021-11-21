@@ -4,6 +4,9 @@ editor_options:
   chunk_output_type: console
 ---
 # Introduction
+
+Our project seeks to understand the relationships between income inequality and quality of life. To tackle this question, we reference the Gapminder dataset, which consists of a variety of data on topics including economics, the environment, and health across the world and over time. 
+
 ```{r eval=FALSE}
 data.raw <- get.raw.dataset()
 data.melt <- get.melted.dataset(data.raw)
@@ -36,12 +39,18 @@ data.melt.yearly <- data.melt %>%
 region.color <- RColorBrewer::brewer.pal(8, "Set1")
 ```
 
+As our primary metric, we selected the Gini coefficient. The Gini coefficient represents income inequality on a scale from 0 to 100, where 0 corresponds to complete equality and 100 corresponds to complete inequality. To begin our analysis, we studied the distribution of income inequality across the world as shown in the interactive map below. 
 
 ```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
 data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
 ```
 
+The default “range” setting depicts the Gini coefficient on a continuous color scale where countries in red (including South Africa) exhibit high income inequality and countries in blue (including Sweden) exhibit low levels of income inequality.   
+
+The map also allows one to toggle between the continuous color scale and a discretized color scale by quartiles. This quartile setting reveals that Africa, North America, and South America tend to have the highest income inequality, while Western Europe tends to have the lowest income inequality.   
+
+We then selected three specific factors of quality of life: 1. education, 2. birth, and 3. suicide and analyzed them in relation to income inequality. The heatmap below depicts the correlations between our three variables of interest, income per person, and the Gini coefficient.  
 
 ```{r qualitycor, fig.cap="Correlation", echo=FALSE}
 data.melt %>% 
@@ -51,3 +60,10 @@ data.melt %>%
   highcharter::hchart(type="heatmap") %>%
   highcharter::hc_plotOptions(heatmap=list(dataLabels=list(enabled=TRUE)))
 ```
+
+A dark blue signifies a strong positive correlation, a dark red signifies a strong negative correlation, and white represents a weak correlation. Thus, the heatmap introduces some possible associations between our variables:   
+* Birth rate is strongly positively correlated with both education and income inequality,  
+* Suicide is negatively associated with education inequality, birth rate, and income inequality, and  
+* Income is strongly negatively correlated with both birth rate and income inequality.  
+
+In the next sections, we explore these initial findings in greater depth. First, we focus on how birth rate, education inequality, and suicide relate to the Gini coefficient individually. Then, we continue our exploration of how all the variables connect and influence one other.  

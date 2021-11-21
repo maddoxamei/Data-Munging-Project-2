@@ -86,7 +86,7 @@ fig.gini <- data %>%
   plotly::add_lines(y = ~gini_avg, showlegend = FALSE) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient")) 
 
-fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.075,0.1,0.1)) %>% plotly::layout(title = "Quality of Life over Time")
+fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.075,0.1,0.1)) %>% plotly::layout(title = "Income Inequality and Quality of Life over Time")
 
 fig
 ```
