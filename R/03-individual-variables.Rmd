@@ -32,15 +32,16 @@ highcharter::hchart(data.melt.avg, "point",
 Education inequality and birth rate appeared to be positively correlated in the heatmap shown in the intro section. However, before studying the relationship between those two variables, we first focused on identifying any associations between birth rate and income inequality.  
 
 In the scatter plot below:  
+
   * each point represents a country,  
   * the color of each point represents the corresponding continent,  
   * the x-axis represents the birth rate in babies per woman, and   
   * the y-axis represents income inequality via the Gini coefficient.   
-  
-> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
-> All plots are interactive. The following scatter plot produced in Plotly also enables you to select and deselect components within the plot. Double-clicking on a color in the legend will display only the points of that color, while single-clicking on a color in the legend will add or remove the corresponding points from the plot. 
 
 Given the knowledge that low income populations tend to have higher birth rates than high income populations, we also used the size of each point to condition on income within each country.  
+
+> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
+> All plots are interactive. In the scatter plot below, you can select and deselect components in the plot. Double-clicking on a color in the legend will display only the points of that color, while single-clicking on a color in the legend will add or remove the corresponding points.
 
 ```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
 g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
@@ -55,7 +56,11 @@ g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg),
 plotly::ggplotly(g)
 ```
 
-The scatter plot confirms the positive correlation that we observed between birth rate and income inequality in the correlation matrix. However, it also provides greater depth to our understanding. 
+The scatter plot confirms that there exists a positive correlation between birth rate and income inequality, on average. However, it reveals a few pieces of information that complicated our interpretation:     
+1. The positive association between birth rate and income inequality does not necessarily hold across a single continent. When we isolate countries from only Africa or only Asia, we observe a negative association (i.e. a higher birth rate tends to be associated with lower income inequality).  
+2. The distribution of the points in the plot are clustered by continent.   
+3. The countries with low birth rates tend to have higher incomes than those with high birth rates.   
+Thus, while there is an overall positive association between birth rate and income inequality, points 1 and 2 indicate that cultural and continent-wide variations are present. Likewise, point 3 indicates that income is a potential confounding variable that could be driving the initial trend we observed between birth rate and income inequality. 
 
 ## Suicide Rate
 ```{r suicidegini, fig.cap="Income Inequality to Suicide Rate", echo = FALSE}

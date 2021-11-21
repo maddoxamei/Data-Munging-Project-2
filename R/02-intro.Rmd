@@ -5,7 +5,7 @@ editor_options:
 ---
 # Introduction
 
-Our project seeks to understand the relationships between income inequality and quality of life. To tackle this question, we reference the Gapminder dataset, which consists of a variety of data on topics including economics, the environment, and health across the world and over time. 
+Our project seeks to understand the relationships between income inequality and quality of life. To tackle this question, we use the Gapminder dataset, which consists of a variety of data on topics including economics, the environment, and health across the world and over time. 
 
 ```{r eval=FALSE}
 data.raw <- get.raw.dataset()
@@ -41,8 +41,7 @@ region.color <- RColorBrewer::brewer.pal(8, "Set1")
 
 As our primary metric, we selected the Gini coefficient. The Gini coefficient represents income inequality on a scale from 0 to 100, where 0 corresponds to complete equality and 100 corresponds to complete inequality. To begin our analysis, we studied the distribution of income inequality across the world as shown in the map below.   
 
-> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
-> All graphs and visualizations in our report are interactive. Scroll over the data within the plots to obtain statistics for each country.  
+> Note: All graphs and visualizations in our report are interactive. Scroll over the data within the plots to obtain statistics for each country.  
 
 ```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
@@ -64,7 +63,8 @@ data.melt %>%
   highcharter::hc_plotOptions(heatmap=list(dataLabels=list(enabled=TRUE)))
 ```
 
-A dark blue signifies a strong positive correlation, a dark red signifies a strong negative correlation, and white represents a weak correlation. Thus, the heatmap introduces some possible associations between our variables:   
+A dark blue signifies a strong positive correlation, a dark red signifies a strong negative correlation, and white represents a weak correlation. Thus, the heatmap introduces some possible associations between our variables: 
+
   * Birth rate is strongly positively correlated with both education and income inequality,  
   * Suicide is negatively associated with education inequality, birth rate, and income inequality, and  
   * Income is strongly negatively correlated with both birth rate and income inequality.  
