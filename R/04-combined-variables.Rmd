@@ -104,4 +104,3 @@ The primary observation, however, is how North America and South America have hi
 Oceania and the Seven Seas consist of a small number of countries and, thus, contain noise that make it hard to identify time-related trends for the education variable for those two regions. That said, the time-related trends in birth rate and income inequality continue to be present in the data.
 
 Ultimately, we observe that all four variables across each continent have decreased over time, on average and with few exceptions. Additionally, the line plots extend our prior analysis to reveal that the associations between education inequality, birth rate, and income inequality have held over time. 
-

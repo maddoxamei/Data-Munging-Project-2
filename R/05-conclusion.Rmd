@@ -1,0 +1,5 @@
+# Conclusion
+
+**Contributions**
+
+Mileva wrote the introduction, contributed the figures and description in Section 2.2 Birth Rate, and conducted the work (data processing, creating figures, and analysis) for the final line plots that analyze the four variables over time. 
