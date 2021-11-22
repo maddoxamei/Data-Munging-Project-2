@@ -52,7 +52,7 @@ The default “range” setting depicts the Gini coefficient on a continuous col
 
 The map also allows one to toggle between the continuous color scale and a discretized color scale by quartiles. This quartile setting reveals that Africa, North America, and South America tend to have the highest income inequality, while Western Europe tends to have the lowest income inequality.   
 
-We then selected three specific factors of quality of life: 1. education, 2. birth, and 3. suicide and analyzed them in relation to income inequality. The heatmap below depicts the correlations between our three variables of interest, income per person, and the Gini coefficient.  
+We then selected three specific factors of quality of life: 1. education inequality, 2. birth rates, and 3. suicide rates and analyzed them in relation to income inequality. The heatmap below depicts the correlations between our three variables of interest, income per person, and the Gini coefficient.  
 
 ```{r qualitycor, fig.cap="Correlation", echo=FALSE}
 data.melt %>% 

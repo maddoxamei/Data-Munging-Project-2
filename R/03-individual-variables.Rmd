@@ -29,7 +29,7 @@ highcharter::hchart(data.melt.avg, "point",
 
 ## Birth Rate
 
-Education inequality and birth rate appeared to be positively correlated in the heatmap shown in the intro section. However, before studying the relationship between those two variables, we first focused on identifying any associations between birth rate and income inequality.  
+Education inequality and birth rate appeared to be positively correlated in the heatmap shown in the introduction. However, before studying the relationship between these two variables, we first focused on identifying any associations between birth rate and income inequality.  
 
 In the scatter plot below:  
 
@@ -39,9 +39,6 @@ In the scatter plot below:
   * the y-axis represents income inequality via the Gini coefficient.   
 
 Given the knowledge that low income populations tend to have higher birth rates than high income populations, we also used the size of each point to condition on income within each country.  
-
-> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
-> All plots are interactive. In the scatter plot below, you can select and deselect components in the plot. Double-clicking on a color in the legend will display only the points of that color, while single-clicking on a color in the legend will add or remove the corresponding points.
 
 ```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
 # Scatter plot of income inequality to birth rate conditioned on continent and income
@@ -57,6 +54,9 @@ g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg),
 # Use plotly to make the plot interactive
 plotly::ggplotly(g)
 ```
+
+> ![sticky-note with remember written on it](https://cdn.pixabay.com/photo/2016/12/21/05/44/reminder-1922255_1280.png){width=10%}
+> All plots are interactive. In the scatter plot above, you can select and deselect components in the plot. Double-clicking on a color in the legend will display only the points of that color, while single-clicking on a color in the legend will add or remove the corresponding points.
 
 The scatter plot confirms that there exists a positive correlation between birth rate and income inequality, on average. However, it reveals a few pieces of information that complicated our interpretation: 
 
