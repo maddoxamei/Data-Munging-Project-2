@@ -3,8 +3,8 @@ fig:qualitycor
 fig:educationgini
 fig:birthrategini
 fig:violinplots
-fig:lineplots
 fig:suicidegini
+fig:lineplots
 introduction
 income-inequality-to-quality-of-life
 education
