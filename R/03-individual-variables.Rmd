@@ -1,7 +1,7 @@
 ---
 output: html_document
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 # Income Inequality to Quality of Life
 
@@ -66,18 +66,57 @@ The scatter plot confirms that there exists a positive correlation between birth
 
 Thus, while there is an overall positive association between birth rate and income inequality, points 1 and 2 indicate that cultural and continent-wide variations are present. Likewise, point 3 indicates that income is a potential confounding variable that could be driving the initial trend we observed between birth rate and income inequality. 
 
+
 ## Suicide Rate
-```{r suicidegini, fig.cap="Income Inequality to Suicide Rate", echo = FALSE}
-fig<- data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2) %>% #For hovertemplate readability.
-  plotly::plot_ly(
-             x=~continent,y=~gini_avg,z=~suicide_avg,
-             color=~continent,colors=region.color,alpha=.8,
-             text=~country,
-             hovertemplate=paste('%{x}','%{text}','GINI:%{y}','SR:%{z}',sep='<br>'))
-fig <- fig %>% plotly::add_markers()
-fig <- fig %>% plotly::layout(scene = list(xaxis = list(title = ''),
-                     yaxis = list(title = 'gini index'),
-                     zaxis = list(title = 'Suicide Rate')))
-fig <- fig %>% plotly::layout(title="Suicide Rate by GINI Index", showlegend = FALSE)
-fig
+Although not typically associated with income inequality, a disproportionate number of suicides occur in low-to-middle income countries, approximately 75% of the global total. ('Preventing Suicide: A Global Imperative',2014,World Health Organization, https://apps.who.int/iris/bitstream/handle/10665/131056/97892?sequence=1,ISBN 978 92 4 156477 9.)  In this section, we will be examining whether or not income inequality has an additional effect on suicide rates.
+
+Suicide is a complicated and delicate subject, influenced by a plethora of cultural, religious, and social factors.  These factors can have a strong influence on reporting, as individuals or government bodies may under-or-misreport incidents.  This may partially explain the gapminder.org dataset's somewhat odd definition, "Mortality due to self-inflicted injury", which is notably missing any element of intent.  Although outside the scope of this report, this should be borne in mind.
+
+The following graph shows suicide rate (per 100,000 people) as a function as GINI, broken down by continent.  The three countries in the 'Seven Seas' continent are included with the continent of their subregion.
+```{r}
+data.melt.avg.temp<-data.melt.avg
+data.melt.avg.temp$continent[data.melt.avg.temp$country=='Maldives']<-'Asia'
+data.melt.avg.temp$continent[data.melt.avg.temp$continent=='Seven seas (open ocean)']<-'Africa'
+data.melt.avg.temp<-subset(data.melt.avg.temp,is.na(data.melt.avg.temp$continent)==FALSE)
+
+region.color.temp<-c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#A65628")
+
+plot<-ggplot2::ggplot(data=data.melt.avg.temp) +
+  ggplot2::geom_point(mapping=ggplot2::aes_string(
+    x='gini_avg',
+    y='suicide_avg',
+    col='continent'
+  )) +
+  ggplot2::ggtitle(paste('Suicide rate to GINI Index, by Continent',sep='')) +
+  ggplot2::xlab('GINI Index') + ggplot2::xlim(25,65)+
+  ggplot2::ylab('Suicide Rate Per 100,000 People') + ggplot2::ylim(0,45)+
+  ggplot2::guides(size="none",alpha="none") +
+  ggplot2::scale_color_manual(values = region.color.temp,na.translate=FALSE)
+
+plot + ggplot2::facet_wrap(~continent,nrow=2,ncol=3)
+rm(data.melt.avg.temp,region.color.temp)
 ```
+From the above scatterplots, we can see that the relationship between suicide rate and income inequality is inconsistent between continents.  Although there are a few subregions where we see strong (or weak) correlations between suicide rate and income inequality, the only continent where we see an appreciable correlation between the two variables is Africa.  This correlation holds when making a similar examination of African subregions.
+
+```{r}
+data.melt.avg.temp<-subset(data.melt.avg,continent=='Africa')
+plot<-ggplot2::ggplot(data=data.melt.avg.temp) +
+  ggplot2::geom_point(mapping=ggplot2::aes_string(
+    x='gini_avg',
+    y='suicide_avg',
+    col='subregion'
+  )) +
+  ggplot2::ggtitle(paste('Suicide rate to GINI Index, by Continent',sep='')) +
+  ggplot2::xlab('GINI Index') + ggplot2::xlim(25,65)+
+  ggplot2::ylab('Suicide Rate Per 100,000 People') + ggplot2::ylim(0,45)+
+  ggplot2::guides(size="none",alpha="none") 
+#ggplot2::scale_color_manual(values = region.color.temp,na.translate=FALSE)
+
+plot + ggplot2::facet_wrap(~subregion,nrow=2,ncol=3)
+rm(data.melt.avg.temp)
+```
+Although at this point we are getting down to comparatively small sample sizes, the correlation between suicide rates and income inequality continues to hold for all but the smallest subregion, Southern Africa.  Southern Africa, however, is an unusual case that bears some specific attention.
+
+Southern Africa contains the two countries in this dataset with the highest suicide rates: Lesotho and Eswatini/Swaziland.  Lesotho has an average suicide rate of 61/100,000 over the last 20 years, a value so high that, when included, it makes the y scale nigh on unreadable.  Although Lesotho itself has a fairly low GINI, approximately 48, it is unique geographically in that it is landlocked by South Africa.  South Africa has a fairly high GINI (63), and an average income of ~12,000, compared to Lesotho's ~2300.  The combined proximity and differences of these two countries suggests that it should not necessarily be taken as a counter-example to the rest of the continent.  Eswatini is in a similar, although less exaggerated, position.
+
+That said, outside of Africa there is very little consistent relationship between income inequality and suicide rates.
