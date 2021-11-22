@@ -41,7 +41,7 @@ region.color <- RColorBrewer::brewer.pal(8, "Set1")
 
 As our primary metric, we selected the Gini coefficient. The Gini coefficient represents income inequality on a scale from 0 to 100, where 0 corresponds to complete equality and 100 corresponds to complete inequality. To begin our analysis, we studied the distribution of income inequality across the world as shown in the map below.   
 
-> Note: All graphs and visualizations in our report are interactive. Scroll over the data within the plots to obtain statistics for each country.  
+> Note: All graphs and visualizations in our report are interactive. Scroll over a portion of the plot to obtain additional statistics. 
 
 ```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
 world.regions <- establish.regions(levels(data.melt$country))

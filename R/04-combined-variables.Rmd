@@ -1,5 +1,5 @@
 # Quality of Life Associations
-Up to now we have explored how each quality of life indicator is associated with income inequality. It is equally important to disect how the quality of life indicators interplay with eachother.
+Up to now we have explored how each quality of life indicator is associated with income inequality. It is equally important to disect how the quality of life indicators interplay with each other.
 
 ```{r}
 fig<-data.melt.avg %>% dplyr::mutate_if(is.numeric, round, 2)%>%
@@ -31,13 +31,17 @@ plot.violin(data.melt.comb, highcharter::highchart(), "value", "continent", "var
       list(title = list(text = "Suicide"), opposite=T))
 ```
 
+Our analysis thus far has disregarded how the variables of interest and Gini coefficient change over time. The set of line plots below depict the time-related trends in each of the variables from 2000 to the present. 
+
 ```{r lineplots, fig.cap="Quality of Life over Time", echo = FALSE}
+
+# Data grouped by year to be used for the plots
 data <- data.melt.yearly
 
+# Plot of education
 fig.education <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  # colors = region.color, 
                   colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),
                   legendgroup = ~continent, 
                   hovertext = paste("Education Discrepancy: ", data$education_discrepancy_avg, 
@@ -47,11 +51,11 @@ fig.education <- data %>%
   plotly::add_lines(y = ~education_discrepancy_avg, showlegend = FALSE) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Education Discrepancy"))
 
+# Plot of suicide
 fig.suicide <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  # colors = region.color,
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),                  
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),
                   legendgroup = ~continent, 
                   hovertext = paste("Suicide: ", data$suicide_avg, 
                                     "<br>Year: ", data$year, 
@@ -60,10 +64,10 @@ fig.suicide <- data %>%
   plotly::add_lines(y = ~suicide_avg) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Suicide"))
 
+# Plot of birth rate
 fig.babies <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  # colors = region.color,
                   colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"), 
                   legendgroup = ~continent, 
                   hovertext = paste("Babies: ", data$babies_per_woman_avg, 
@@ -73,11 +77,11 @@ fig.babies <- data %>%
   plotly::add_lines(y = ~babies_per_woman_avg, showlegend = FALSE) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Babies Per Woman"))
 
+# Plot of Gini coefficient
 fig.gini <- data %>%
   plotly::group_by(continent) %>%
   plotly::plot_ly(x = ~year, color = ~continent, 
-                  # colors = region.color,
-                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),                  
+                  colors = c('#E41A1C', '#377EB8', '#4DAF4A', '#984EA3', "#FF7F00", "#FFFF33", "#A65628"),      
                   legendgroup = ~continent, 
                   hovertext = paste("Gini Coefficient: ", data$gini_avg, 
                                     "<br>Year: ", data$year, 
@@ -86,10 +90,18 @@ fig.gini <- data %>%
   plotly::add_lines(y = ~gini_avg, showlegend = FALSE) %>%
   plotly::layout(xaxis = list(title = "Year"), yaxis = list(title = "Gini Coefficient")) 
 
+# Combine each of the four subplots into one plot
 fig <- plotly::subplot(fig.education, fig.suicide, fig.babies, fig.gini, nrows=2, titleY = TRUE, margin = c(0.085,0.075,0.1,0.1)) %>% plotly::layout(title = "Income Inequality and Quality of Life over Time")
 
 fig
 ```
 
+Initially, we focused on only three continents: Africa, Asia, and Europe. (This view can be obtained by double-clicking on Africa and then single-clicking Asia and Europe.) For the most part, all four variables across the three continents exhibit a downward trend across time. Additionally, in the plots of education discrepancy, birth rate, and Gini coefficient, Africa has the largest magnitudes, Europe has the smallest values, and Asia is in the middle. 
 
+We then added North America and South America to our analysis. (This view can be obtained by single-clicking North America and South America.) Other than the suicide rate in South America, the four variables tend to exhibit a downward trend across time for all five continents. 
+The primary observation, however, is how North America and South America have high income inequality relative to what is expected from the low birth rates and low levels of education inequality. 
+
+Oceania and the Seven Seas consist of a small number of countries and, thus, contain noise that make it hard to identify time-related trends for the education variable for those two regions. That said, the time-related trends in birth rate and income inequality continue to be present in the data.
+
+Ultimately, we observe that all four variables across each continent have decreased over time, on average and with few exceptions. Additionally, the line plots extend our prior analysis to reveal that the associations between education inequality, birth rate, and income inequality have held over time. 
 

@@ -44,6 +44,7 @@ Given the knowledge that low income populations tend to have higher birth rates 
 > All plots are interactive. In the scatter plot below, you can select and deselect components in the plot. Double-clicking on a color in the legend will display only the points of that color, while single-clicking on a color in the legend will add or remove the corresponding points.
 
 ```{r birthrategini, fig.cap="Income Inequality to Birth Rate", echo = FALSE}
+# Scatter plot of income inequality to birth rate conditioned on continent and income
 g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg), 
             ggplot2::aes(x = babies_per_woman_avg, y = gini_avg, col = continent,  size = income_avg)) + 
   ggplot2::geom_point(alpha = 0.7) + ggplot2::xlab("Babies Per Woman") + 
@@ -53,6 +54,7 @@ g <- ggplot2::ggplot(tidyr::drop_na(data.melt.avg),
   ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) + 
   ggplot2::scale_color_manual(values = region.color)
 
+# Use plotly to make the plot interactive
 plotly::ggplotly(g)
 ```
 
