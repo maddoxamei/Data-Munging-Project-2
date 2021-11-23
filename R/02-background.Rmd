@@ -1,0 +1,41 @@
+# The Data
+All the data for this project is sourced from Gapminder.
+> Gapminder is an independent Swedish foundation with no political, religious or economic affiliations. Gapminder fights devastating misconceptions and promotes a fact-based worldview everyone can understand.
+
+Gapminder aggregates information about countries, dating back to the 1800's. As countries are not static entities but sucuptible to emergence, change, or collapse, the countrys' identity is established as being what it was for the corresponding year of the recorded statistic. This can lead to multiple country observations being associated with the same logical entity (i.e. Soviet Union and Russia). This non-static property of countries also leads to an increased proportion missing data. Missing data is also attributed to a countries' lack of tracking said statistic or an inibility for Gapminder to determine it onesself. 
+
+## Aquisition
+
+The data is [hosted on their website](https://www.gapminder.org/) in individual CSV files. Unfortunately there is no API to easily acquire mass amounts of data. Therefore, we individually downloaded the CSV's and hosted them ourselves in the cloud for easy, remote access.
+
+## Preprocessing
+
+Data for each variable is individually stored in separate CSV files where rows represent country names and columns represent years. The steps to create a single, comprehensive dataset were as follows:
+
+1. Download the CSV data from the cloud for each variable of interest
+2. Melt the year columns in each individual CSV into one column, resulting in a dataset with three columns: `country`, `year`, and `<variablename>`
+3. Join all the individual reshaped datasets together by the `country` and `year` values to create a single dataset.
+4. Strip the leading `X` from the values in the year column
+5. Translate income values with letters into their numerical representations (i.e. 3K to 3000)
+6. Cast all columns, except `country`, into numbers
+7. Convert the `country` column into a factor
+8. Remove any rows where there are no relevant statistics recorded for a given country-year pairing.
+
+```{r eval=FALSE}
+data.raw <- get.raw.dataset()
+data.melt <- get.melted.dataset(data.raw)
+```
+
+Country statisics is oftentimes effectively represented via an approprieatly colored map. In R, this requires that boarders be established for each country using polygons. Miller projected geospacial information for each country was downloaded. This geospacial information included the coordinates for country boundaries, the country name, and its associated contintent and subregion in the world. The geospacial information and the combined dataset from earlier were algorithmically matched and joined by the `country` column to create a comprehensive dataset.
+
+Algorithmic matching was required as the country naming convention was not the same across the two datasets. (i.e. St. Lucia vs. Saint Lucia, Taiwan vs. China: Taiwan, etc.)
+
+```{r eval=FALSE}
+data.melt %<>% append.regions()
+```
+
+To avoid repetitive computation of data aquisition and preprocessing steps, the finalized dataset was saved to a CSV file and merely loaded from disk when needed.
+
+```{r eval=FALSE}
+write.csv(data.melt, "ComprehensiveMeltedData.csv", row.names=F)
+```

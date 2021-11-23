@@ -12,6 +12,10 @@ Academic education is thought to be correlated with job opportunity, and by exte
 
 Figure \@ref(fig:educationgini) illustrates said relationship. Primary school completion is measured as the ratio of new entrants to all age-relevant individuals for the last grade of primary school. This quantification method fails to account for individuals who dropout in the final year of primary education. As inequality is an overarching theme of interest to us, we focused on the primary school completion rate for boys compared to their girl counterparts - dubbed, "Eucation discrepancy."
 
+```{r eval=FALSE}
+data.melt$education_discrepancy <- data.melt$education_boys - data.melt$education_girls
+```
+
 ```{r educationgini, fig.cap="Income Inequality to Education Inequality", echo=FALSE}
 highcharter::hchart(data.melt.avg, "point",
           highcharter::hcaes(education_discrepancy_avg, gini_avg, z=income_avg, group = continent)) %>% 

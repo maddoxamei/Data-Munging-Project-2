@@ -1,0 +1,6 @@
+# Contributions
+**Fitzgerald** contributed the figures and description in Section 2.3 Suicide Rate, and created/analyzed the 3d scatterplot in section 4.
+
+**Maddox** conducted and wrote the data aquisition and preprocessing sections, contributed the figures for the introduction, and created the figures, wrote the description, and conducted the analysis for the Education section and the final violin plot in the Inequality of Life section
+
+**Van Tuyl** wrote the introduction, contributed the figures and description in Section 2.2 Birth Rate, and conducted the work (data processing, creating figures, and analysis) for the final line plots that analyze the four variables over time. 
