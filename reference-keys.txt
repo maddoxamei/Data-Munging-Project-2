@@ -5,10 +5,13 @@ fig:birthrategini
 fig:violinplots
 fig:suicidegini
 fig:lineplots
+the-data
+aquisition
+preprocessing
 introduction
 income-inequality-to-quality-of-life
 education
 birth-rate
 suicide-rate
 quality-of-life-associations
-conclusion
+contributions
