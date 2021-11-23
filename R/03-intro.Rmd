@@ -31,7 +31,7 @@ As our primary metric, we selected the Gini coefficient. The Gini coefficient re
 
 > Note: All graphs and visualizations in our report are interactive. Scroll over a portion of the plot to obtain additional statistics. 
 
-```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, warning = FALSE}
+```{r giniavg, fig.cap="Average Gini Coefficient", echo=FALSE, message=FALSE}
 world.regions <- establish.regions(levels(data.melt$country))
 data.map(world.regions, "gini_avg", palette="RdYlBu", reverse.palette=T, domain.stretch=F)
 ```
