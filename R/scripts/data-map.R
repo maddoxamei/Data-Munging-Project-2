@@ -25,7 +25,7 @@ country.polygons <- function(data.names, country.names){
   hong.kong <- grep("Hong Kong", x$China)
   x$`Hong Kong, China` <- x$China[hong.kong]
   x$China <- x$China[-hong.kong]
-  print(paste("Country not found:",names(x)[sapply(x, length)==0]))
+  # print(paste("Country not found:",names(x)[sapply(x, length)==0]))
   
   x %>% reshape2::melt() %>% 
     tibble::as_tibble()

@@ -57,7 +57,7 @@ match.regions <- function(data.names, country.names){
     country.names[unlist(lapply(country, function(x){
       grep(x, country.names)}))]
   })
-  print(paste("Country not found:",names(x)[sapply(x, length)==0]))
+  # print(paste("Country not found:",names(x)[sapply(x, length)==0]))
   
   x %>% reshape2::melt() %>% 
     tibble::as_tibble()

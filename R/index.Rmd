@@ -1,5 +1,5 @@
 ---
-title: "Title Goes Here"
+title: "Gini Coefficient and Quality of Life"
 author: "Mei Maddox, Mileva Van Tuyl, Thomas Fitzgerald"
 date: "Last Compiled on `r format(Sys.Date(), format='%b %d %Y')`"
 output:
